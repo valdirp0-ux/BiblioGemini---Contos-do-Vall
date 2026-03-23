@@ -77,6 +77,14 @@
                     <div class="card-gradiente rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between relative">
                         ${imgTag}
                         <div class="p-7">
+                        <div class="card-actions" style="position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; z-index: 10;">
+    <button onclick="prepararEdicao('${s.id}')" title="Editar" style="background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+        ✏️
+    </button>
+    <button onclick="deletarHistoria('${s.id}')" title="Excluir" style="background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+        🗑️
+    </button>
+</div>
                             <span class="text-[10px] font-bold uppercase text-indigo-500 tracking-widest">${s.Tema}</span>
                             <h3 class="text-xl font-bold mt-1 mb-3">${s.Titulo}</h3>
                             <p class="text-slate-600 text-sm mb-6 italic line-clamp-3">"${s.Resumo}"</p>
