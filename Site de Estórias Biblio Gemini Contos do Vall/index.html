@@ -9,9 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .card-gradiente { background: white; transition: all 0.3s ease; overflow: hidden; }
+        .card-gradiente { background: white; transition: all 0.3s ease; overflow: hidden; position: relative; }
         .card-gradiente:hover { transform: translateY(-5px); }
         .imagem-capa { width: 100%; height: 180px; object-fit: cover; background: #e2e8f0; }
+        .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; z-index: 50; }
+        .btn-action { background: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 14px; transition: transform 0.2s; }
+        .btn-action:hover { transform: scale(1.1); }
     </style>
 </head>
 <body class="p-4 md:p-10">
@@ -21,7 +24,7 @@
     <p class="text-slate-500 italic text-lg mb-8">Diretório de histórias e transmutação de ideias.</p>
     
     <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
-        <input type="text" id="searchInput" placeholder="Pesquisar contos..." class="w-full md:w-96 p-4 rounded-2xl border border-slate-200 shadow-sm">
+        <input type="text" id="searchInput" placeholder="Pesquisar contos..." class="w-full md:w-96 p-4 rounded-2xl border border-slate-200 shadow-sm outline-none focus:ring-2 focus:ring-indigo-400">
         <button onclick="toggleForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold shadow-lg transition-all w-full md:w-auto">
             + Novo Conto
         </button>
@@ -35,19 +38,18 @@
             <input type="text" id="title" placeholder="Título da História" required class="p-3 border rounded-xl outline-none focus:border-indigo-500">
             <input type="text" id="theme" placeholder="Tema (Ex: Metafísica)" required class="p-3 border rounded-xl outline-none focus:border-indigo-500">
         </div>
-        <textarea id="summary" placeholder="Breve resumo ou frase de impacto..." required class="w-full p-3 border rounded-xl h-24 outline-none focus:border-indigo-500"></textarea>
-        <input type="url" id="url" placeholder="Link do Google Gemini (Conto Completo)" required class="w-full p-3 border rounded-xl outline-none focus:border-indigo-500">
-        <input type="url" id="url_capa" placeholder="Link da Imagem de Capa (Opcional)" class="w-full p-3 border rounded-xl outline-none focus:border-indigo-500">
-        <button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all">Publicar no Vall</button>
+        <textarea id="summary" placeholder="Breve resumo..." required class="w-full p-3 border rounded-xl h-24 outline-none focus:border-indigo-500"></textarea>
+        <input type="url" id="url" placeholder="Link do Conto (Gemini)" required class="w-full p-3 border rounded-xl outline-none focus:border-indigo-500">
+        <input type="url" id="url_capa" placeholder="Link da Imagem de Capa" class="w-full p-3 border rounded-xl outline-none focus:border-indigo-500">
+        <button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all">Salvar no Vall</button>
     </form>
 </section>
 
 <main id="storiesGrid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
 
 <script>
-    // --- CONFIGURAÇÃO DO SUPABASE ---
-    const SUPABASE_URL = 'https://psfngmrepxsczicbswsh.supabase.co'; 
-    const SUPABASE_KEY = 'SUA_CHAVE_AQUI'; // <--- VERIFIQUE SE A CHAVE ESTÁ CORRETA AQUI
+    const SUPABASE_URL = 'https://psfngmrepxsczicbswsh.supabase.co';
+    const SUPABASE_KEY = 'SUA_CHAVE_AQUI'; // <--- COLOQUE SUA CHAVE AQUI SE ELA NÃO ESTIVER SALVA
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let editandoId = null;
@@ -65,19 +67,73 @@
     async function carregar() {
         const { data: historias, error } = await _supabase.from('Histórias').select('*').order('created_at', { ascending: false });
         const grid = document.getElementById('storiesGrid');
-        grid.innerHTML = '';
+        grid.innerHTML = historias.map(s => `
+            <div class="card-gradiente rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                ${s.url_capa ? `<img src="${s.url_capa}" class="imagem-capa" alt="Capa">` : `<div class="imagem-capa flex items-center justify-center bg-slate-100 text-slate-400">Sem Capa</div>`}
+                <div class="card-actions">
+                    <button onclick="prepararEdicao('${s.id}')" class="btn-action" title="Editar">✏️</button>
+                    <button onclick="deletarHistoria('${s.id}')" class="btn-action" title="Excluir">🗑️</button>
+                </div>
+                <div class="p-7">
+                    <span class="text-[10px] font-bold uppercase text-indigo-500 tracking-widest">${s.Tema}</span>
+                    <h3 class="text-xl font-bold mt-1 mb-3">${s.Titulo}</h3>
+                    <p class="text-slate-600 text-sm mb-6 italic line-clamp-3">"${s.Resumo}"</p>
+                    <a href="${s.Url}" target="_blank" class="block text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition-all">Ler Completa</a>
+                </div>
+            </div>`).join('');
+    }
 
-        historias.forEach(s => {
-            const imgTag = s.url_capa ? `<img src="${s.url_capa}" class="imagem-capa" alt="Capa">` : `<div class="imagem-capa flex items-center justify-center bg-slate-100 text-slate-400">Sem Capa</div>`;
-            
-            grid.innerHTML += `
-                <div class="card-gradiente rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between relative">
-                    ${imgTag}
-                    <div class="card-actions" style="position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; z-index: 50;">
-                        <button onclick="prepararEdicao('${s.id}')" title="Editar" style="background: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">✏️</button>
-                        <button onclick="deletarHistoria('${s.id}')" title="Excluir" style="background: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">🗑️</button>
-                    </div>
-                    <div class="p-7">
-                        <span class="text-[10px] font-bold uppercase text-indigo-500 tracking-widest">${s.Tema}</span>
-                        <h3 class="text-xl font-bold mt-1 mb-3">${s.Titulo}</h3>
-                        <p class="text
+    document.getElementById('storyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const dados = {
+            Titulo: document.getElementById('title').value,
+            Tema: document.getElementById('theme').value,
+            Resumo: document.getElementById('summary').value,
+            Url: document.getElementById('url').value,
+            url_capa: document.getElementById('url_capa').value
+        };
+
+        if (editandoId) {
+            await _supabase.from('Histórias').update(dados).eq('id', editandoId);
+        } else {
+            await _supabase.from('Histórias').insert([dados]);
+        }
+        
+        toggleForm();
+        carregar();
+    });
+
+    async function deletarHistoria(id) {
+        if (confirm("Deseja mesmo apagar este conto?")) {
+            await _supabase.from('Histórias').delete().eq('id', id);
+            carregar();
+        }
+    }
+
+    async function prepararEdicao(id) {
+        const { data } = await _supabase.from('Histórias').select('*').eq('id', id).single();
+        if (data) {
+            editandoId = id;
+            document.getElementById('title').value = data.Titulo;
+            document.getElementById('theme').value = data.Tema;
+            document.getElementById('summary').value = data.Resumo;
+            document.getElementById('url').value = data.Url;
+            document.getElementById('url_capa').value = data.url_capa || '';
+            document.getElementById('formTitle').innerText = "Editar História";
+            if (document.getElementById('formSection').classList.contains('hidden')) toggleForm();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const termo = e.target.value.toLowerCase();
+        document.querySelectorAll('#storiesGrid > div').forEach(card => {
+            const texto = card.innerText.toLowerCase();
+            card.style.display = texto.includes(termo) ? 'flex' : 'none';
+        });
+    });
+
+    carregar();
+</script>
+</body>
+</html>
