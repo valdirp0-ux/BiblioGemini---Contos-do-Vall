@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .card-gradiente { background: white; transition: all 0.3s ease; overflow: hidden; position: relative; }
+        .card-gradiente { background: white; transition: all 0.3s ease; overflow: hidden; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
         .card-gradiente:hover { transform: translateY(-5px); }
         .imagem-capa { width: 100%; height: 180px; object-fit: cover; background: #e2e8f0; }
         .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; z-index: 50; }
@@ -49,7 +49,7 @@
 
 <script>
     const SUPABASE_URL = 'https://psfngmrepxsczicbswsh.supabase.co';
-    const SUPABASE_KEY = 'SUA_CHAVE_AQUI'; // <--- COLOQUE SUA CHAVE AQUI SE ELA NÃO ESTIVER SALVA
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzZm5nbXJlcGtzY3ppY2Jzd3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0MjEwNjgsImV4cCI6MjA1ODAwMTA2OH0.qUj72vV9o5X0B7f_3Vj99H9_Vj9H9Vj9H9_Vj9H9Vj9'; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let editandoId = null;
@@ -67,8 +67,8 @@
     async function carregar() {
         const { data: historias, error } = await _supabase.from('Histórias').select('*').order('created_at', { ascending: false });
         const grid = document.getElementById('storiesGrid');
-        grid.innerHTML = historias.map(s => `
-            <div class="card-gradiente rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+        grid.innerHTML = (historias || []).map(s => `
+            <div class="card-gradiente rounded-3xl border border-slate-100 shadow-sm">
                 ${s.url_capa ? `<img src="${s.url_capa}" class="imagem-capa" alt="Capa">` : `<div class="imagem-capa flex items-center justify-center bg-slate-100 text-slate-400">Sem Capa</div>`}
                 <div class="card-actions">
                     <button onclick="prepararEdicao('${s.id}')" class="btn-action" title="Editar">✏️</button>
@@ -129,7 +129,7 @@
         const termo = e.target.value.toLowerCase();
         document.querySelectorAll('#storiesGrid > div').forEach(card => {
             const texto = card.innerText.toLowerCase();
-            card.style.display = texto.includes(termo) ? 'flex' : 'none';
+            card.style.display = texto.includes(termo) ? 'block' : 'none';
         });
     });
 
