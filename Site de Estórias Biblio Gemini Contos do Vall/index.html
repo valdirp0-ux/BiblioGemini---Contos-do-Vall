@@ -9,14 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .card-gradiente { background: white; transition: all 0.3s ease; }
+        .card-gradiente { background: white; transition: all 0.3s ease; overflow: hidden; }
         .card-gradiente:hover { transform: translateY(-5px); }
+        .imagem-capa { width: 100%; height: 180px; object-fit: cover; background: #e2e8f0; }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
     <header class="max-w-6xl mx-auto mb-10 text-center">
-        <img src="logo.png" alt="Logo" class="mx-auto mb-4 max-w-[280px] w-full h-auto" onerror="this.style.display='none'">
+        <img src="logo.png" alt="Logo BiblioGemini" class="mx-auto mb-4 max-w-[280px] w-full h-auto">
         <h1 class="text-4xl font-extrabold text-indigo-700 mb-2">BiblioGemini - Contos do Vall</h1>
         <p class="text-slate-500 italic text-lg mb-8">Diretório de histórias e transmutação de ideias.</p>
         
@@ -40,9 +41,11 @@
                     <option value="Fantasia">Fantasia</option>
                     <option value="Espiritualidade">Espiritualidade</option>
                     <option value="Isekai">Isekai</option>
+                    <option value="Metafísica">Metafísica</option>
                 </select>
             </div>
             <textarea id="summary" placeholder="Resumo da história..." rows="3" required class="w-full p-3 border rounded-xl outline-none focus:border-indigo-500"></textarea>
+            <input type="url" id="url_capa" placeholder="Link da Imagem de Capa (URL)" class="w-full p-3 border rounded-xl outline-none focus:border-indigo-500">
             <input type="url" id="url" placeholder="Link do Gemini" required class="w-full p-3 border rounded-xl outline-none focus:border-indigo-500">
             <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-bold transition">Publicar no Vall</button>
         </form>
@@ -53,7 +56,6 @@
     </main>
 
     <script>
-        // Configurações do seu Supabase
         const SUPABASE_URL = 'https://hnsfhpaxahgjsscmyrts.supabase.co'; 
         const SUPABASE_KEY = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -68,14 +70,18 @@
             const grid = document.getElementById('storyGrid');
             grid.innerHTML = lista.length ? '' : '<p class="text-center col-span-full py-10 text-slate-400">Nenhuma história encontrada ainda.</p>';
             lista.forEach(s => {
+                // EXIBIÇÃO DA CAPA NO CARD
+                const imgTag = s.url_capa ? `<img src="${s.url_capa}" class="imagem-capa" alt="Capa">` : `<div class="imagem-capa flex items-center justify-center text-slate-300">Sem Capa</div>`;
+                
                 grid.innerHTML += `
-                    <div class="card-gradiente p-7 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between relative">
-                        <div>
+                    <div class="card-gradiente rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between relative">
+                        ${imgTag}
+                        <div class="p-7">
                             <span class="text-[10px] font-bold uppercase text-indigo-500 tracking-widest">${s.Tema}</span>
                             <h3 class="text-xl font-bold mt-1 mb-3">${s.Titulo}</h3>
                             <p class="text-slate-600 text-sm mb-6 italic line-clamp-3">"${s.Resumo}"</p>
+                            <a href="${s.Url}" target="_blank" class="block text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Ler Completa</a>
                         </div>
-                        <a href="${s.Url}" target="_blank" class="text-center bg-indigo-50 text-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Ler Completa</a>
                     </div>`;
             });
         }
@@ -88,7 +94,8 @@
                 Titulo: document.getElementById('title').value,
                 Tema: document.getElementById('theme').value,
                 Resumo: document.getElementById('summary').value,
-                Url: document.getElementById('url').value
+                Url: document.getElementById('url').value,
+                url_capa: document.getElementById('url_capa').value // SALVANDO A CAPA
             };
             const { error } = await _supabase.from('Histórias').insert([dados]);
             if (!error) {
@@ -96,7 +103,7 @@
                 toggleForm();
                 carregar();
             } else {
-                alert("Erro ao salvar! Verifique se os créditos do Supabase voltaram.");
+                alert("Erro ao salvar! Verifique a coluna no Supabase.");
             }
         });
 
