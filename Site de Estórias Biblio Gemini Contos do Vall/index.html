@@ -9,7 +9,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         .gradient-text { background: linear-gradient(135deg, #1e293b 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        #modalCadastro { background: rgba(0,0,0,0.5); z-index: 100; }
+        #modalCadastro { background: rgba(0,0,0,0.5); z-index: 9999; }
     </style>
 </head>
 <body class="p-4 md:p-10">
@@ -43,7 +43,7 @@
                 <input type="text" id="novoTitulo" placeholder="Título do Conto" class="w-full p-4 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
                 <textarea id="novoResumo" placeholder="A história começa aqui..." class="w-full p-4 border border-slate-200 rounded-xl h-32 outline-none focus:ring-2 focus:ring-purple-500"></textarea>
                 <div class="flex gap-4">
-                    <button onclick="salvarConto()" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700">Salvar no Storybook</button>
+                    <button onclick="salvarConto()" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all">Salvar no Storybook</button>
                     <button onclick="fecharModal()" class="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200">Cancelar</button>
                 </div>
             </div>
@@ -53,13 +53,14 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
+        // Configuração segura do Supabase
         const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
         const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
         const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
         let stories = [];
 
-        // FUNÇÃO QUE ABRE O FORMULÁRIO
+        // Funções de Interface
         function abrirModal() {
             document.getElementById('modalCadastro').classList.remove('hidden');
         }
@@ -68,14 +69,14 @@
             document.getElementById('modalCadastro').classList.add('hidden');
         }
 
-        // FUNÇÃO QUE VOCÊ ENVIOU (TRAZ A CORA)
+        // Funções de Dados (A que trouxe a Cora de volta)
         async function carregar() {
             const { data, error } = await supabase
                 .from('Histórias') 
                 .select('*'); 
 
             if (error) { 
-                console.error('Erro:', error); 
+                console.error('Erro ao carregar:', error); 
                 return; 
             }
             stories = data;
@@ -101,22 +102,3 @@
 
         async function salvarConto() {
             const t = document.getElementById('novoTitulo').value;
-            const r = document.getElementById('novoResumo').value;
-            
-            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r }]);
-            
-            if (error) {
-                alert("Erro ao salvar: " + error.message);
-            } else {
-                fecharModal();
-                carregar();
-                document.getElementById('novoTitulo').value = '';
-                document.getElementById('novoResumo').value = '';
-            }
-        }
-
-        // INICIALIZAÇÃO
-        carregar();
-    </script>
-</body>
-</html>
