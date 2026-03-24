@@ -59,13 +59,17 @@
 
         let stories = [];
 
-        // --- FUNÇÕES QUE VOCÊ ENVIOU ---
+        // FUNÇÕES RESTAURADAS QUE FAZEM A CORA APARECER
         async function carregar() {
             const { data, error } = await supabase
                 .from('Histórias') 
                 .select('*'); 
 
-            if (error) { console.error('Erro:', error); return; }
+            if (error) { 
+                console.error('Erro:', error); 
+                document.getElementById('storiesGrid').innerHTML = `<p class="text-red-500">Erro: ${error.message}</p>`;
+                return; 
+            }
             stories = data;
             renderizar();
         }
@@ -81,27 +85,4 @@
                     <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors">${s.Titulo}</h3>
                     <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4 flex-grow">${s.Resumo}</p>
                     <div class="flex justify-end gap-3 pt-4 border-t border-slate-50">
-                        <a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>
-                    </div>
-                </div>
-            `).join('');
-        }
-        // ------------------------------
-
-        function abrirModal() { document.getElementById('modalCadastro').classList.remove('hidden'); }
-        function fecharModal() { document.getElementById('modalCadastro').classList.add('hidden'); }
-
-        async function salvarConto() {
-            const t = document.getElementById('novoTitulo').value;
-            const r = document.getElementById('novoResumo').value;
-            
-            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r }]);
-            
-            if (error) alert("Erro ao salvar: " + error.message);
-            else { fecharModal(); carregar(); }
-        }
-
-        carregar();
-    </script>
-</body>
-</html>
+                        <a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler
