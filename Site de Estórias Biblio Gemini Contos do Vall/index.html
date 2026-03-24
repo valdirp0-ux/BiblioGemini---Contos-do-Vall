@@ -8,49 +8,64 @@
     <style>
         body { font-family: sans-serif; background-color: #f8fafc; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
         
-        /* CABEÇALHO PRESERVADO */
-        .bibliogemini { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
-        .titulo-vall { font-size: 3.5rem; font-weight: 900; color: #1e293b; letter-spacing: -0.05em; text-transform: uppercase; margin-bottom: 10px; }
-        .subtitulo { color: #64748b; font-style: italic; font-size: 1rem; margin-bottom: 30px; }
-        .btn-novo { background: #4f46e5; color: white; padding: 12px 30px; border-radius: 15px; font-weight: 800; font-size: 0.9rem; cursor: pointer; border: none; }
+        .titulo-vall { font-size: 3rem; font-weight: 900; color: #1e293b; text-transform: uppercase; margin-bottom: 5px; }
+        .subtitulo { color: #64748b; font-style: italic; margin-bottom: 30px; }
+        .btn-novo { background: #4f46e5; color: white; padding: 10px 25px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; }
         
-        /* GRADE DE 2 COLUNAS */
+        /* A GRADE: 2 COLUNAS REAIS (ESQUERDA E DIREITA) */
         #storiesGrid { 
             display: grid; 
-            grid-template-cols: repeat(2, 1fr); 
-            gap: 20px; 
+            grid-template-cols: 1fr 1fr; /* Força duas colunas iguais */
+            gap: 15px; 
             width: 100%; 
-            max-width: 900px; 
+            max-width: 1000px; 
             margin-top: 40px; 
         }
 
-        @media (max-width: 700px) { #storiesGrid { grid-template-cols: 1fr; } }
-        
-        /* CARD COMPACTO */
+        /* O CARD: IMAGEM NA ESQUERDA, TEXTO NA DIREITA */
         .card-conto { 
             background: white; 
-            padding: 20px; 
-            border-radius: 25px; 
-            border: 1px solid #f1f5f9; 
-            display: flex; 
-            flex-direction: column;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border-radius: 20px; 
+            border: 1px solid #e2e8f0; 
+            display: flex; /* Alinha imagem e texto lado a lado dentro do card */
+            overflow: hidden;
+            height: 160px; /* Altura fixa para todos ficarem iguais e pequenos */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
-        .img-pequena { 
-            width: 100%; 
-            height: 120px; /* Imagem pequena como solicitado */
-            object-fit: cover; 
-            border-radius: 15px; 
-            margin-bottom: 15px; 
+        .img-container {
+            width: 120px; /* Largura da imagem pequena na esquerda */
+            min-width: 120px;
+            height: 100%;
         }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info-container {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .tema { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; }
+        .titulo { font-weight: 800; font-size: 1.1rem; color: #1e293b; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .resumo { font-size: 0.8rem; color: #64748b; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .ler-btn { font-size: 10px; font-weight: 900; color: #4f46e5; text-decoration: none; margin-top: 8px; align-self: flex-end; }
+
+        @media (max-width: 800px) { #storiesGrid { grid-template-cols: 1fr; } } /* No celular vira 1 coluna */
 
         #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 1000; }
     </style>
 </head>
 <body>
 
-    <span class="bibliogemini"><span style="color:#f59e0b">✨</span> BIBLIOGEMINI</span>
     <h1 class="titulo-vall">CONTOS DO VALL</h1>
     <p class="subtitulo">"Onde a realidade se desdobra em narrativas."</p>
 
@@ -60,7 +75,7 @@
 
     <div id="modal">
         <div style="background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 400px;">
-            <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px;">Nova Jornada</h2>
+            <h2 style="font-weight: 900; margin-bottom: 20px;">Nova Jornada</h2>
             <select id="novoTema" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
                 <option value="METAFÍSICA">Metafísica</option>
                 <option value="ESPIRITUALIDADE">Espiritualidade</option>
@@ -71,7 +86,7 @@
             <input type="text" id="novoLink" placeholder="Link do Gemini" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 10px; border: 1px solid #e2e8f0;">
             <div style="display: flex; gap: 10px;">
                 <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 12px; border-radius: 10px; font-weight: bold;">Salvar</button>
-                <button onclick="fecharModal()" style="padding: 12px 20px; background: #f1f5f9; border-radius: 10px; color: #64748b;">Sair</button>
+                <button onclick="fecharModal()" style="padding: 12px 20px; background: #f1f5f9; border-radius: 10px;">Sair</button>
             </div>
         </div>
     </div>
@@ -94,16 +109,14 @@
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = contos.map(c => `
                 <div class="card-conto">
-                    ${c.url_capa ? `<img src="${c.url_capa}" class="img-pequena">` : ''}
-                    <div style="flex-grow: 1;">
-                        <span style="font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase;">${c.Tema || 'GERAL'}</span>
-                        <h3 style="font-weight: 800; font-size: 1.2rem; color: #1e293b; margin: 4px 0;">${c.Titulo}</h3>
-                        <p style="color: #64748b; font-size: 0.85rem; line-height: 1.4; margin-bottom: 12px;">
-                            ${c.Resumo.substring(0, 90)}${c.Resumo.length > 90 ? '...' : ''}
-                        </p>
+                    <div class="img-container">
+                        <img src="${c.url_capa || 'https://via.placeholder.com/150'}" alt="Capa">
                     </div>
-                    <div style="text-align: right; border-top: 1px solid #f8fafc; padding-top: 8px;">
-                        <a href="${c.Url}" target="_blank" style="color: #4f46e5; font-weight: 900; font-size: 11px; text-decoration: none;">ABRIR PORTAL ↗</a>
+                    <div class="info-container">
+                        <span class="tema">${c.Tema || 'GERAL'}</span>
+                        <h3 class="titulo">${c.Titulo}</h3>
+                        <p class="resumo">${c.Resumo}</p>
+                        <a href="${c.Url}" target="_blank" class="ler-btn">LER PORTAL ↗</a>
                     </div>
                 </div>
             `).join('');
