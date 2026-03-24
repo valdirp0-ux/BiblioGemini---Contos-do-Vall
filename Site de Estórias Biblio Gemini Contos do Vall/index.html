@@ -28,10 +28,10 @@
             <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">Nova Jornada</h2>
             
             <select id="novoTema" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; background: white;">
-    <option value="METAFÍSICA">Metafísica</option>
-    <option value="ESPIRITUALIDADE">Espiritualidade</option>
-    <option value="FICÇÃO">Ficção</option>
-</select>
+                <option value="METAFÍSICA">Metafísica</option>
+                <option value="ESPIRITUALIDADE">Espiritualidade</option>
+                <option value="FICÇÃO">Ficção</option>
+            </select>
 
             <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px;">
             <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; height: 100px;"></textarea>
@@ -55,7 +55,7 @@
         function abrirModal() { document.getElementById('modal').style.display = 'flex'; }
         function fecharModal() { document.getElementById('modal').style.display = 'none'; }
 
-        // SUA FUNÇÃO ORIGINAL (MANTIDA)
+        // SUA FUNÇÃO QUE FAZ A CORA APARECER (MANTIDA INTEGRALMENTE)
         async function carregar() {
             const { data, error } = await supabase
                 .from('Histórias') 
@@ -66,44 +66,44 @@
             renderizar();
         }
 
-        // SUA FUNÇÃO DE RENDERIZAR (MANTIDA COM AS CLASSES DO TAILWIND)
-       function renderizar() {
-    const grid = document.getElementById('storiesGrid');
-    grid.innerHTML = stories.map(s => `
-        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-            ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4">` : ''}
-            <div class="flex items-center gap-2 mb-2">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500">${s.Tema || 'Geral'}</span>
-            </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors">${s.Titulo}</h3>
-            <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4">${s.Resumo}</p>
-            <div class="flex justify-end gap-3 pt-4 border-t border-slate-50">
-                <a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>
-            </div>
-        </div>
-    `).join('');
-}
+        // SUA FUNÇÃO DE RENDERIZAR (MANTIDA INTEGRALMENTE)
+        function renderizar() {
+            const grid = document.getElementById('storiesGrid');
+            grid.innerHTML = stories.map(s => `
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4">` : ''}
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500">${s.Tema || 'Geral'}</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors">${s.Titulo}</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4">${s.Resumo}</p>
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-50">
+                        <a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-        // CAMBIO 2: Ajuste na função salvar para incluir o Tema
+        // FUNÇÃO SALVAR AJUSTADA PARA O CAMPO TEMA
         async function salvarConto() {
-    const t = document.getElementById('novoTitulo').value;
-    const r = document.getElementById('novoResumo').value;
-    const tema = document.getElementById('novoTema').value; // Linha nova
+            const t = document.getElementById('novoTitulo').value;
+            const r = document.getElementById('novoResumo').value;
+            const tema = document.getElementById('novoTema').value;
 
-    // Enviando o Tema para o banco não dar erro
-    const { error } = await supabase.from('Histórias').insert([
-        { Titulo: t, Resumo: r, Tema: tema }
-    ]);
+            // Inserindo o Tema para satisfazer o banco de dados
+            const { error } = await supabase.from('Histórias').insert([
+                { Titulo: t, Resumo: r, Tema: tema }
+            ]);
 
-    if (error) {
-        alert("Erro: " + error.message);
-    } else {
-        fecharModal();
-        carregar(); // Recarrega a Cora e os novos contos
-        document.getElementById('novoTitulo').value = '';
-        document.getElementById('novoResumo').value = '';
-    }
-}
+            if (error) {
+                alert("Erro: " + error.message);
+            } else {
+                fecharModal();
+                carregar();
+                document.getElementById('novoTitulo').value = '';
+                document.getElementById('novoResumo').value = '';
+            }
+        }
 
         carregar();
     </script>
