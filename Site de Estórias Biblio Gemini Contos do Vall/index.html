@@ -37,10 +37,11 @@
         <div style="background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 400px;">
             <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px;">Nova Jornada</h2>
             
-            <input type="text" id="campoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <input type="text" id="campoCapa" placeholder="Link da Imagem (URL)" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <textarea id="campoResumo" placeholder="Resumo..." style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0; height: 80px;"></textarea>
-            <input type="text" id="campoLink" placeholder="Link do Portal Gemini" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <input type="text" id="campoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0;">
+            <input type="text" id="campoTema" placeholder="Tema (Ex: Metafísica, Ficção)" style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0;">
+            <input type="text" id="campoCapa" placeholder="Link da Imagem (URL)" style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0;">
+            <textarea id="campoResumo" placeholder="Resumo..." style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0; height: 60px;"></textarea>
+            <input type="text" id="campoLink" placeholder="Link do Portal Gemini" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
             
             <div style="display: flex; gap: 10px;">
                 <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold;">Salvar</button>
@@ -60,8 +61,7 @@
 
         async function carregarContos() {
             const { data, error } = await supa.from('Histórias').select('*');
-            if (error) console.error("Erro ao carregar:", error.message);
-            else renderizar(data);
+            if (!error) renderizar(data);
         }
 
         function renderizar(contos) {
@@ -82,17 +82,17 @@
         }
 
         window.salvarConto = async function() {
-            // Pegando os valores pelos IDs novos e fixos
             const t = document.getElementById('campoTitulo').value;
+            const tema = document.getElementById('campoTema').value; // Novo campo!
             const r = document.getElementById('campoResumo').value;
             const l = document.getElementById('campoLink').value;
             const c = document.getElementById('campoCapa').value;
 
-            if(!t || !r) return alert("Preencha título e resumo!");
+            if(!t || !tema || !r) return alert("Preencha Título, Tema e Resumo!");
 
-            // Inserindo com os nomes exatos das colunas do seu banco
+            // Enviando o Tema para satisfazer o banco
             const { error } = await supa.from('Histórias').insert([
-                { Titulo: t, Resumo: r, Url: l, url_capa: c }
+                { Titulo: t, Tema: tema, Resumo: r, Url: l, url_capa: c }
             ]);
 
             if (error) {
@@ -101,12 +101,16 @@
                 alert("Salvo com sucesso!");
                 fecharModal();
                 carregarContos();
-                // Limpa campos
-                document.getElementById('campoTitulo').value = '';
-                document.getElementById('campoResumo').value = '';
-                document.getElementById('campoLink').value = '';
-                document.getElementById('campoCapa').value = '';
+                limpar();
             }
+        }
+
+        function limpar() {
+            document.getElementById('campoTitulo').value = '';
+            document.getElementById('campoTema').value = '';
+            document.getElementById('campoResumo').value = '';
+            document.getElementById('campoLink').value = '';
+            document.getElementById('campoCapa').value = '';
         }
 
         document.addEventListener('DOMContentLoaded', carregarContos);
