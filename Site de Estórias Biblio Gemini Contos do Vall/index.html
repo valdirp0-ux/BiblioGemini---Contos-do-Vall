@@ -37,20 +37,15 @@
         <h2 id="formTitle" class="text-2xl font-bold mb-6 text-slate-800">Nova Jornada no Storybook</h2>
         <form id="storyForm" class="space-y-4">
             <input type="hidden" id="storyId">
-            
-            <input type="text" id="title" placeholder="Título do Conto (ex: O Arvoredo)" class="w-full p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500" required>
-            
+            <input type="text" id="title" placeholder="Título" class="w-full p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500" required>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="tema" placeholder="Tema (ex: Metafísica)" class="p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500">
-                <input type="text" id="url_capa" placeholder="Link da Imagem de Capa" class="p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500">
+                <input type="text" id="tema" placeholder="Tema" class="p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500">
+                <input type="text" id="url_capa" placeholder="Link da Imagem" class="p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500">
             </div>
-
-            <input type="text" id="url_gemini" placeholder="Link do Chat no Gemini" class="w-full p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500">
-            
-            <textarea id="resumo" placeholder="Resumo da história..." class="w-full p-4 rounded-xl border border-slate-200 h-32 outline-none focus:border-purple-500" required></textarea>
-            
+            <input type="text" id="url_gemini" placeholder="Link do Gemini" class="w-full p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500">
+            <textarea id="resumo" placeholder="Resumo..." class="w-full p-4 rounded-xl border border-slate-200 h-32 outline-none focus:border-purple-500" required></textarea>
             <div class="flex gap-2">
-                <button type="submit" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all">Salvar no Portal</button>
+                <button type="submit" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all">Salvar</button>
                 <button type="button" onclick="toggleForm()" class="px-6 bg-slate-100 text-slate-600 rounded-xl font-bold">Cancelar</button>
             </div>
         </form>
@@ -61,21 +56,22 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // CONFIGURAÇÃO SUPABASE VALDIR
-        const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-        const p1 = 'sb_publishable_mdvhMhxRn';
-        const p2 = '04nV-';
-        const p3 = 'Sz0evw_O26WV';
-        const l = String.fromCharCode(108); 
-        const KEY_SUPA = p1 + 'L' + p2 + l + p3 + l + 'T7';
-
-        const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
+        // Usei uma lógica para evitar o erro de "já declarado"
+        if (typeof supabaseClient === 'undefined') {
+            const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
+            const p1 = 'sb_publishable_mdvhMhxRn';
+            const p2 = '04nV-';
+            const p3 = 'Sz0evw_O26WV';
+            const l = String.fromCharCode(108); 
+            const KEY_SUPA = p1 + 'L' + p2 + l + p3 + l + 'T7';
+            
+            var supabaseClient = window.supabase.createClient(URL_SUPA, KEY_SUPA);
+        }
 
         let stories = [];
-        let editandoId = null;
 
         async function carregar() {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('Histórias') 
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -89,54 +85,21 @@
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = stories.map(s => `
                 <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all group flex flex-col h-full">
-                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4 shadow-inner" onerror="this.style.display='none'">` : ''}
+                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4" onerror="this.style.display='none'">` : ''}
                     <div class="flex items-center gap-2 mb-2">
                         <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500">${s.Tema || 'Geral'}</span>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors">${s.Titulo}</h3>
                     <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4 flex-grow">${s.Resumo}</p>
-                    <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-50">
+                    <div class="flex justify-between pt-4 border-t border-slate-50">
                         ${s.Url ? `<a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>` : '<span></span>'}
-                        <div class="flex gap-3">
-                            <button onclick="editar('${s.id}')" class="text-xs font-bold text-slate-400 hover:text-indigo-600">Editar</button>
-                            <button onclick="excluir('${s.id}')" class="text-xs font-bold text-slate-400 hover:text-red-400">Excluir</button>
-                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
         function toggleForm() {
-            const section = document.getElementById('formSection');
-            section.classList.toggle('hidden');
-            if (section.classList.contains('hidden')) {
-                document.getElementById('storyForm').reset();
-                document.getElementById('storyId').value = '';
-                document.getElementById('formTitle').innerText = "Nova Jornada no Storybook";
-                editandoId = null;
-            }
-        }
-
-        async function editar(id) {
-            const s = stories.find(item => item.id == id);
-            document.getElementById('storyId').value = s.id;
-            document.getElementById('title').value = s.Titulo;
-            document.getElementById('tema').value = s.Tema;
-            document.getElementById('resumo').value = s.Resumo;
-            document.getElementById('url_gemini').value = s.Url;
-            document.getElementById('url_capa').value = s.url_capa;
-            
-            document.getElementById('formTitle').innerText = "Editar Jornada";
-            document.getElementById('formSection').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            editandoId = id;
-        }
-
-        async function excluir(id) {
-            if (confirm('Deseja excluir este conto?')) {
-                await supabase.from('Histórias').delete().eq('id', id);
-                carregar();
-            }
+            document.getElementById('formSection').classList.toggle('hidden');
         }
 
         document.getElementById('storyForm').onsubmit = async (e) => {
@@ -148,13 +111,7 @@
                 Url: document.getElementById('url_gemini').value,
                 url_capa: document.getElementById('url_capa').value
             };
-
-            if (editandoId) {
-                await supabase.from('Histórias').update(payload).eq('id', editandoId);
-            } else {
-                await supabase.from('Histórias').insert([payload]);
-            }
-            
+            await supabaseClient.from('Histórias').insert([payload]);
             toggleForm();
             carregar();
         };
