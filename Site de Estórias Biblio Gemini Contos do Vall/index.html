@@ -8,7 +8,6 @@
     <style>
         body { font-family: sans-serif; background-color: #f8fafc; padding: 20px; }
         .grid-contos { display: grid; grid-template-cols: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { bg-white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         #modal { background: rgba(0,0,0,0.5); position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1000; }
     </style>
 </head>
@@ -27,8 +26,17 @@
     <div id="modal">
         <div style="background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 500px;">
             <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">Nova Jornada</h2>
+            
+            <select id="novoTema" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; background: white;">
+                <option value="METAFÍSICA">Metafísica</option>
+                <option value="ESPIRITUALIDADE">Espiritualidade</option>
+                <option value="FICÇÃO">Ficção</option>
+                <option value="OUTROS">Outros</option>
+            </select>
+
             <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px;">
-            <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; h-32"></textarea>
+            <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; height: 100px;"></textarea>
+            
             <div style="display: flex; gap: 10px;">
                 <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 10px; border-radius: 8px; font-weight: bold;">Salvar</button>
                 <button onclick="fecharModal()" style="padding: 10px; background: #f1f5f9; border-radius: 8px;">Cancelar</button>
@@ -45,11 +53,10 @@
 
         let stories = [];
 
-        // FUNÇÕES DE INTERFACE
         function abrirModal() { document.getElementById('modal').style.display = 'flex'; }
         function fecharModal() { document.getElementById('modal').style.display = 'none'; }
 
-        // SUA FUNÇÃO QUE FAZ A CORA APARECER
+        // SUA FUNÇÃO ORIGINAL (MANTIDA)
         async function carregar() {
             const { data, error } = await supabase
                 .from('Histórias') 
@@ -60,24 +67,44 @@
             renderizar();
         }
 
+        // SUA FUNÇÃO DE RENDERIZAR (MANTIDA COM AS CLASSES DO TAILWIND)
         function renderizar() {
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = stories.map(s => `
-                <div class="card bg-white">
-                    ${s.url_capa ? `<img src="${s.url_capa}" style="width: 100%; h-40; object-fit: cover; border-radius: 12px; margin-bottom: 15px;">` : ''}
-                    <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">${s.Titulo}</h3>
-                    <p style="color: #475569; margin-bottom: 20px;">${s.Resumo}</p>
-                    <a href="${s.Url}" target="_blank" style="color: #4f46e5; font-weight: bold; text-decoration: underline;">Ler no Gemini</a>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4">` : ''}
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500">${s.Tema || 'Geral'}</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors">${s.Titulo}</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4">${s.Resumo}</p>
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-50">
+                        <a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>
+                    </div>
                 </div>
             `).join('');
         }
 
+        // CAMBIO 2: Ajuste na função salvar para incluir o Tema
         async function salvarConto() {
             const t = document.getElementById('novoTitulo').value;
             const r = document.getElementById('novoResumo').value;
-            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r }]);
-            if (error) alert("Erro: " + error.message);
-            else { fecharModal(); carregar(); }
+            const tema = document.getElementById('novoTema').value;
+
+            if(!t || !r) return alert("Preencha título e resumo!");
+
+            const { error } = await supabase.from('Histórias').insert([
+                { Titulo: t, Resumo: r, Tema: tema }
+            ]);
+
+            if (error) {
+                alert("Erro: " + error.message);
+            } else {
+                fecharModal();
+                carregar();
+                document.getElementById('novoTitulo').value = '';
+                document.getElementById('novoResumo').value = '';
+            }
         }
 
         carregar();
