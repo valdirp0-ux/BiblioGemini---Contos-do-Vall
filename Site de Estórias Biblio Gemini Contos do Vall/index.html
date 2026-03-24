@@ -30,26 +30,27 @@
 
     <div id="storiesGrid"></div>
 
-    <div id="modal">
-        <div style="background: white; padding: 40px; border-radius: 30px; width: 90%; max-width: 500px;">
-            <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 25px;">Nova Jornada</h2>
-            
-            <select id="novoTema" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-weight: 600;">
-                <option value="METAFÍSICA">Metafísica</option>
-                <option value="ESPIRITUALIDADE">Espiritualidade</option>
-                <option value="FICÇÃO">Ficção</option>
-            </select>
+   <div id="modal">
+    <div style="background: white; padding: 40px; border-radius: 30px; width: 90%; max-width: 500px;">
+        <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 25px;">Nova Jornada</h2>
+        
+        <select id="novoTema" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-weight: 600;">
+            <option value="METAFÍSICA">Metafísica</option>
+            <option value="ESPIRITUALIDADE">Espiritualidade</option>
+            <option value="FICÇÃO">Ficção</option>
+        </select>
 
-            <input type="text" id="novoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; height: 100px;"></textarea>
-            <input type="text" id="novoLink" placeholder="Link do Gemini" style="width: 100%; padding: 12px; margin-bottom: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
-            
-            <div style="display: flex; gap: 10px;">
-                <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 15px; border-radius: 12px; font-weight: bold;">Salvar no Storybook</button>
-                <button onclick="fecharModal()" style="padding: 15px 25px; background: #f1f5f9; border-radius: 12px; color: #64748b; font-weight: 600;">Cancelar</button>
-            </div>
+        <input type="text" id="novoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; height: 100px;"></textarea>
+        
+        <input type="text" id="novoLink" placeholder="Link do Gemini (https://...)" style="width: 100%; padding: 12px; margin-bottom: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+        
+        <div style="display: flex; gap: 10px;">
+            <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 15px; border-radius: 12px; font-weight: bold;">Salvar no Storybook</button>
+            <button onclick="fecharModal()" style="padding: 15px 25px; background: #f1f5f9; border-radius: 12px; color: #64748b; font-weight: 600;">Cancelar</button>
         </div>
     </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
