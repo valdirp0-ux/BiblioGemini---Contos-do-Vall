@@ -5,33 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contos do Valdir | Storybook</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background-color: #f8fafc; padding: 20px; }
-        .grid-contos { display: grid; grid-template-cols: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { bg-white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        #modal { background: rgba(0,0,0,0.5); position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1000; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .gradient-text { background: linear-gradient(135deg, #1e293b 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        #modalCadastro { background: rgba(0,0,0,0.5); z-index: 9999; }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-10">
 
-    <header style="text-align: center; margin-bottom: 50px;">
-        <h1 style="font-size: 3rem; font-weight: 800; color: #1e293b;">Contos do Valdir</h1>
-        <p style="color: #64748b; font-style: italic;">"Onde a realidade se desdobra em narrativas."</p>
-        <div style="margin-top: 30px;">
-            <button onclick="abrirModal()" style="background: #4f46e5; color: white; padding: 15px 30px; border-radius: 12px; font-weight: bold;">+ Novo Conto</button>
+    <header class="max-w-6xl mx-auto mb-16 text-center pt-10">
+        <div class="inline-flex items-center gap-2 mb-4">
+            <span class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase">✨ Bibliogemini</span>
+        </div>
+        <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tight text-slate-900">
+            Contos do <span class="gradient-text">Valdir</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-slate-500 italic font-medium max-w-2xl mx-auto leading-relaxed">
+            "Onde a realidade se desdobra em narrativas."
+        </p>
+        
+        <div class="mt-12 flex flex-col md:flex-row items-center justify-center gap-4">
+            <input type="text" id="searchInput" placeholder="Pesquisar portais..." 
+                class="w-full md:w-96 px-6 py-4 rounded-2xl border border-slate-200 bg-white shadow-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+            <button onclick="abrirModal()" class="w-full md:w-auto px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg hover:bg-indigo-700 transition-all">
+                + Novo Conto
+            </button>
         </div>
     </header>
 
-    <div id="storiesGrid" class="grid-contos"></div>
+    <main id="storiesGrid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
 
-    <div id="modal">
-        <div style="background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 500px;">
-            <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">Nova Jornada</h2>
-            <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px;">
-            <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; h-32"></textarea>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 10px; border-radius: 8px; font-weight: bold;">Salvar</button>
-                <button onclick="fecharModal()" style="padding: 10px; background: #f1f5f9; border-radius: 8px;">Cancelar</button>
+    <div id="modalCadastro" class="fixed inset-0 hidden flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl relative">
+            <h2 class="text-2xl font-bold mb-6 italic text-slate-800">Nova Jornada</h2>
+            <div class="space-y-4">
+                <select id="novoTema" class="w-full p-4 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 bg-white">
+                    <option value="METAFÍSICA">Metafísica</option>
+                    <option value="ESPIRITUALIDADE">Espiritualidade</option>
+                    <option value="FICÇÃO">Ficção</option>
+                    <option value="OUTROS">Outros</option>
+                </select>
+                
+                <input type="text" id="novoTitulo" placeholder="Título do Conto" class="w-full p-4 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+                <textarea id="novoResumo" placeholder="A história começa aqui..." class="w-full p-4 border border-slate-200 rounded-xl h-32 outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                
+                <div class="flex gap-4 pt-2">
+                    <button onclick="salvarConto()" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-colors">Salvar no Storybook</button>
+                    <button onclick="fecharModal()" class="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -43,41 +65,53 @@
         const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
         const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
-        let stories = [];
+        function abrirModal() { document.getElementById('modalCadastro').classList.remove('hidden'); }
+        function fecharModal() { document.getElementById('modalCadastro').classList.add('hidden'); }
 
-        // FUNÇÕES DE INTERFACE
-        function abrirModal() { document.getElementById('modal').style.display = 'flex'; }
-        function fecharModal() { document.getElementById('modal').style.display = 'none'; }
-
-        // SUA FUNÇÃO QUE FAZ A CORA APARECER
         async function carregar() {
-            const { data, error } = await supabase
-                .from('Histórias') 
-                .select('*'); 
-
-            if (error) { console.error('Erro:', error); return; }
-            stories = data;
-            renderizar();
+            const { data, error } = await supabase.from('Histórias').select('*');
+            if (error) { console.error(error); return; }
+            renderizar(data);
         }
 
-        function renderizar() {
+        function renderizar(lista) {
             const grid = document.getElementById('storiesGrid');
-            grid.innerHTML = stories.map(s => `
-                <div class="card bg-white">
-                    ${s.url_capa ? `<img src="${s.url_capa}" style="width: 100%; h-40; object-fit: cover; border-radius: 12px; margin-bottom: 15px;">` : ''}
-                    <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">${s.Titulo}</h3>
-                    <p style="color: #475569; margin-bottom: 20px;">${s.Resumo}</p>
-                    <a href="${s.Url}" target="_blank" style="color: #4f46e5; font-weight: bold; text-decoration: underline;">Ler no Gemini</a>
+            grid.innerHTML = lista.map(s => `
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col h-full">
+                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4 shadow-inner">` : ''}
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500 mb-2">${s.Tema || 'Geral'}</span>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">${s.Titulo}</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4 flex-grow">${s.Resumo}</p>
+                    <div class="flex justify-end pt-4 border-t border-slate-50">
+                        <a href="${s.Url || '#'}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>
+                    </div>
                 </div>
             `).join('');
         }
 
         async function salvarConto() {
-            const t = document.getElementById('novoTitulo').value;
-            const r = document.getElementById('novoResumo').value;
-            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r }]);
-            if (error) alert("Erro: " + error.message);
-            else { fecharModal(); carregar(); }
+            const tema = document.getElementById('novoTema').value;
+            const titulo = document.getElementById('novoTitulo').value;
+            const resumo = document.getElementById('novoResumo').value;
+            
+            if(!titulo || !resumo) {
+                alert("Preencha título e resumo!");
+                return;
+            }
+
+            // Agora enviamos o 'Tema' para satisfazer a regra do banco de dados
+            const { error } = await supabase
+                .from('Histórias')
+                .insert([{ Titulo: titulo, Resumo: resumo, Tema: tema }]);
+            
+            if (error) {
+                alert("Erro ao salvar: " + error.message);
+            } else {
+                fecharModal();
+                carregar();
+                document.getElementById('novoTitulo').value = '';
+                document.getElementById('novoResumo').value = '';
+            }
         }
 
         carregar();
