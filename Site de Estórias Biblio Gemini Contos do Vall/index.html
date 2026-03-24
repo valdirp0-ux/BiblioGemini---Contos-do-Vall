@@ -99,15 +99,16 @@
         window.abrirModal = function() { document.getElementById('modal').style.display = 'flex'; }
         window.fecharModal = function() { document.getElementById('modal').style.display = 'none'; }
 
-        async function carregarContos() {
-            // Busca dados da tabela 'Histórias'
-            const { data, error } = await conexaoSupa.from('Histórias').select('*').order('created_at', { ascending: false });
-            if (!error) {
-                renderizar(data);
-            } else {
-                console.error("Erro Supabase:", error.message);
-            }
-        }
+       async function carregarContos() {
+    // Removi o pedaço que pedia o '.order(...)' para não dar erro
+    const { data, error } = await conexaoSupa.from('Histórias').select('*');
+    
+    if (!error) {
+        renderizar(data);
+    } else {
+        console.error("Erro Supabase:", error.message);
+    }
+}
 
         function renderizar(contos) {
             const grid = document.getElementById('storiesGrid');
