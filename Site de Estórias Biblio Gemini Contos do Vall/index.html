@@ -14,13 +14,24 @@
 </head>
 <body>
 
-    <header style="text-align: center; margin-bottom: 50px;">
-        <h1 style="font-size: 3rem; font-weight: 800; color: #1e293b;">Contos do Valdir</h1>
-        <p style="color: #64748b; font-style: italic;">"Onde a realidade se desdobra em narrativas."</p>
-        <div style="margin-top: 30px;">
-            <button onclick="abrirModal()" style="background: #4f46e5; color: white; padding: 15px 30px; border-radius: 12px; font-weight: bold;">+ Novo Conto</button>
-        </div>
-    </header>
+    <header style="text-align: center; margin-bottom: 60px; padding-top: 40px;">
+    <span class="bibliogemini">✨ BIBLIOGEMINI</span>
+    
+    <h1 class="titulo-vall">
+        CONTOS DO <span class="destaque-vall">VALL</span>
+    </h1>
+    
+    <p style="color: #64748b; font-style: italic; margin-top: 15px;">"Onde a realidade se desdobra em narrativas."</p>
+    
+    <div style="margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+        <input type="text" id="searchInput" placeholder="Pesquisar portais..." 
+            style="width: 100%; max-width: 400px; padding: 15px 25px; border-radius: 20px; border: 1px solid #e2e8f0; outline: none;">
+        
+        <button onclick="abrirModal()" style="background: #4f46e5; color: white; padding: 18px 40px; border-radius: 15px; font-weight: 800; shadow: 0 4px 14px rgba(79, 70, 229, 0.4);">
+            + Novo Conto
+        </button>
+    </div>
+</header>
 
     <div id="storiesGrid" class="grid-contos"></div>
 
