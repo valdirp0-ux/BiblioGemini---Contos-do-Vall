@@ -3,80 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contos do Vall | Storybook</title>
+    <title>Contos do Valdir | Storybook</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; padding: 20px; }
-        .bibliogemini { font-size: 11px; font-weight: 900; tracking: 0.3em; color: #94a3b8; text-transform: uppercase; letter-spacing: 3px; }
-        .titulo-valdir { font-size: 4.5rem; font-weight: 900; color: #1e293b; letter-spacing: -2px; line-height: 1; }
-        .gradiente { background: linear-gradient(135deg, #1e293b 40%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .grid-contos { display: grid; grid-template-cols: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        #modal { background: rgba(0,0,0,0.5); position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        body { font-family: sans-serif; background-color: #f8fafc; padding: 20px; }
+        .grid-contos { display: grid; grid-template-cols: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { bg-white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        #modal { background: rgba(0,0,0,0.5); position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1000; }
     </style>
 </head>
 <body>
 
-    <header style="text-align: center; margin-bottom: 60px; padding-top: 50px;">
-        <span class="bibliogemini">✨ BIBLIOGEMINI</span>
-        <h1 class="titulo-valdir">Contos do <span class="gradiente">Valdir</span></h1>
-        <p style="color: #64748b; font-style: italic; margin-top: 15px;">"Onde a realidade se desdobra em narrativas."</p>
-        
-        <div style="margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
-            <input type="text" id="searchInput" placeholder="Pesquisar portais..." 
-                style="width: 100%; max-width: 400px; padding: 15px 25px; border-radius: 20px; border: 1px solid #e2e8f0; outline: none;">
-            <button onclick="abrirModal()" style="background: #4f46e5; color: white; padding: 18px 40px; border-radius: 15px; font-weight: 800; shadow: 0 4px 14px rgba(79, 70, 229, 0.4);">
-                + Novo Conto
-            </button>
+    <header style="text-align: center; margin-bottom: 50px;">
+        <h1 style="font-size: 3rem; font-weight: 800; color: #1e293b;">Contos do Valdir</h1>
+        <p style="color: #64748b; font-style: italic;">"Onde a realidade se desdobra em narrativas."</p>
+        <div style="margin-top: 30px;">
+            <button onclick="abrirModal()" style="background: #4f46e5; color: white; padding: 15px 30px; border-radius: 12px; font-weight: bold;">+ Novo Conto</button>
         </div>
     </header>
 
     <div id="storiesGrid" class="grid-contos"></div>
 
     <div id="modal">
-        <div style="background: white; padding: 40px; border-radius: 30px; width: 100%; max-width: 500px;">
-            <h2 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 25px;">Nova Jornada</h2>
-            
-            <select id="novoTema" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; background: white;">
-                <option value="METAFÍSICA">Metafísica</option>
-                <option value="ESPIRITUALIDADE">Espiritualidade</option>
-                <option value="FICÇÃO">Ficção</option>
-            </select>
-
-            <input type="text" id="novoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px;">
-            <textarea id="novoResumo" placeholder="Resumo da história..." style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 10px; height: 120px;"></textarea>
-            
+        <div style="background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 500px;">
+            <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">Nova Jornada</h2>
+            <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px;">
+            <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; h-32"></textarea>
             <div style="display: flex; gap: 10px;">
-                <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 15px; border-radius: 10px; font-weight: bold;">Salvar</button>
-                <button onclick="fecharModal()" style="padding: 15px 25px; background: #f1f5f9; border-radius: 10px;">Cancelar</button>
+                <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 10px; border-radius: 8px; font-weight: bold;">Salvar</button>
+                <button onclick="fecharModal()" style="padding: 10px; background: #f1f5f9; border-radius: 8px;">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
         const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
         const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
         const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
+        let stories = [];
+
+        // FUNÇÕES DE INTERFACE
         function abrirModal() { document.getElementById('modal').style.display = 'flex'; }
         function fecharModal() { document.getElementById('modal').style.display = 'none'; }
 
+        // SUA FUNÇÃO QUE FAZ A CORA APARECER
         async function carregar() {
-            const { data, error } = await supabase.from('Histórias').select('*');
-            if (error) return;
-            renderizar(data);
+            const { data, error } = await supabase
+                .from('Histórias') 
+                .select('*'); 
+
+            if (error) { console.error('Erro:', error); return; }
+            stories = data;
+            renderizar();
         }
 
-        function renderizar(lista) {
+        function renderizar() {
             const grid = document.getElementById('storiesGrid');
-            grid.innerHTML = lista.map(s => `
-                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-xl transition-all flex flex-col h-full">
-                    ${s.url_capa ? `<img src="${s.url_capa}" style="width:100%; height:180px; object-fit:cover; border-radius:20px; margin-bottom:20px;">` : ''}
-                    <span style="font-size:10px; font-weight:900; color:#7c3aed; text-transform:uppercase; margin-bottom:10px;">${s.Tema || 'GERAL'}</span>
-                    <h3 style="font-size:1.5rem; font-weight:bold; color:#1e293b; margin-bottom:15px;">${s.Titulo}</h3>
-                    <p style="color:#64748b; line-height:1.6; margin-bottom:20px; flex-grow:1;">${s.Resumo}</p>
-                    <a href="${s.Url}" target="_blank" style="color:#4f46e5; font-weight:900; font-size:12px; text-decoration:underline;">LER NO GEMINI ↗</a>
+            grid.innerHTML = stories.map(s => `
+                <div class="card bg-white">
+                    ${s.url_capa ? `<img src="${s.url_capa}" style="width: 100%; h-40; object-fit: cover; border-radius: 12px; margin-bottom: 15px;">` : ''}
+                    <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">${s.Titulo}</h3>
+                    <p style="color: #475569; margin-bottom: 20px;">${s.Resumo}</p>
+                    <a href="${s.Url}" target="_blank" style="color: #4f46e5; font-weight: bold; text-decoration: underline;">Ler no Gemini</a>
                 </div>
             `).join('');
         }
@@ -84,19 +75,11 @@
         async function salvarConto() {
             const t = document.getElementById('novoTitulo').value;
             const r = document.getElementById('novoResumo').value;
-            const tema = document.getElementById('novoTema').value;
-
-            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r, Tema: tema }]);
-            
-            if (error) {
-                alert("Erro: " + error.message);
-            } else {
-                fecharModal();
-                carregar();
-                document.getElementById('novoTitulo').value = '';
-                document.getElementById('novoResumo').value = '';
-            }
+            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r }]);
+            if (error) alert("Erro: " + error.message);
+            else { fecharModal(); carregar(); }
         }
+
         carregar();
     </script>
 </body>
