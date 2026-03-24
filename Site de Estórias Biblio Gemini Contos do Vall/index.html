@@ -8,43 +8,43 @@
     <style>
         body { font-family: sans-serif; background-color: #f8fafc; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
         .bibliogemini { font-size: 14px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
-        .titulo-vall { font-size: 3.5rem; font-weight: 900; color: #1e293b; margin-bottom: 20px; text-align: center; }
-        .subtitulo { color: #64748b; font-style: italic; font-size: 1.2rem; margin-bottom: 40px; }
-        .search-container { width: 100%; max-width: 450px; position: relative; margin-bottom: 30px; }
-        .search-input { width: 100%; padding: 15px 25px; border-radius: 20px; border: 1px solid #e2e8f0; outline: none; font-size: 1rem; color: #64748b; }
-        .btn-novo { background: #4f46e5; color: white; padding: 15px 40px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; }
-        .btn-novo:hover { background: #4338ca; transform: translateY(-2px); }
-        #storiesGrid { display: grid; grid-template-cols: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; width: 100%; max-width: 1100px; margin-top: 50px; }
+        .titulo-vall { font-size: 4rem; font-weight: 900; color: #1e293b; letter-spacing: -0.05em; text-transform: uppercase; }
+        .destaque-gradiente { background: linear-gradient(135deg, #1e293b 30%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        #storiesGrid { display: grid; grid-template-cols: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; width: 100%; max-width: 1200px; margin-top: 50px; }
         #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1000; }
     </style>
 </head>
 <body>
 
     <span class="bibliogemini">✨ BIBLIOGEMINI</span>
-    <h1 class="titulo-vall">CONTOS DO VALL</h1>
-    <p class="subtitulo">"Onde a realidade se desdobra em narrativas."</p>
+    <h1 class="titulo-vall">CONTOS DO <span class="destaque-gradiente">VALL</span></h1>
+    <p style="color: #64748b; font-style: italic; margin-top: 10px;">"Onde a realidade se desdobra em narrativas."</p>
 
-    <div class="search-container">
-        <input type="text" class="search-input" placeholder="Pesquisar portais...">
+    <div style="margin-top: 30px; width: 100%; max-width: 450px;">
+        <input type="text" placeholder="Pesquisar portais..." style="width: 100%; padding: 15px 25px; border-radius: 20px; border: 1px solid #e2e8f0; outline: none; margin-bottom: 20px;">
     </div>
 
-    <button class="btn-novo" onclick="abrirModal()">+ Novo Conto</button>
+    <button onclick="abrirModal()" style="background: #4f46e5; color: white; padding: 15px 40px; border-radius: 15px; font-weight: 800; cursor: pointer;">+ Novo Conto</button>
 
     <div id="storiesGrid"></div>
 
     <div id="modal">
-        <div style="background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 450px;">
-            <h2 style="font-weight: 800; font-size: 1.5rem; margin-bottom: 20px;">Nova Jornada</h2>
-            <select id="novoTema" style="width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #ddd;">
+        <div style="background: white; padding: 35px; border-radius: 30px; width: 90%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+            <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 25px; color: #1e293b;">Nova Jornada</h2>
+            
+            <select id="novoTema" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-weight: 600;">
                 <option value="METAFÍSICA">Metafísica</option>
                 <option value="ESPIRITUALIDADE">Espiritualidade</option>
                 <option value="FICÇÃO">Ficção</option>
             </select>
-            <input type="text" id="novoTitulo" placeholder="Título" style="width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #ddd;">
-            <textarea id="novoResumo" placeholder="Resumo" style="width:100%; padding:12px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd; height:100px;"></textarea>
+
+            <input type="text" id="novoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <textarea id="novoResumo" placeholder="Resumo da história..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; height: 100px;"></textarea>
+            <input type="text" id="novoLink" placeholder="Link do Gemini (https://...)" style="width: 100%; padding: 12px; margin-bottom: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            
             <div style="display: flex; gap: 10px;">
-                <button onclick="salvarConto()" style="flex:1; padding:15px; background:#4f46e5; color:white; border-radius:12px; font-weight:bold; border:none;">Salvar</button>
-                <button onclick="fecharModal()" style="padding:15px; background:#f1f5f9; border-radius:12px; border:none; color:#64748b;">Cancelar</button>
+                <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 15px; border-radius: 12px; font-weight: bold; border: none;">Salvar no Storybook</button>
+                <button onclick="fecharModal()" style="padding: 15px 25px; background: #f1f5f9; border-radius: 12px; color: #64748b; font-weight: 600; border: none;">Cancelar</button>
             </div>
         </div>
     </div>
@@ -59,8 +59,7 @@
         function fecharModal() { document.getElementById('modal').style.display = 'none'; }
 
         async function carregar() {
-            // Removida a tentativa de ler Created_at que não existe
-            const { data, error } = await supabase.from('Histórias').select('Titulo, Resumo, Tema, url_capa, Url');
+            const { data, error } = await supabase.from('Histórias').select('*');
             if (error) return console.error(error);
             renderizar(data);
         }
@@ -68,11 +67,16 @@
         function renderizar(contos) {
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = contos.map(c => `
-                <div style="background:white; padding:25px; border-radius:25px; border:1px solid #e2e8f0; shadow:sm;">
-                    ${c.url_capa ? `<img src="${c.url_capa}" style="width:100%; border-radius:15px; margin-bottom:15px;">` : ''}
-                    <span style="font-size:10px; font-weight:900; color:#4f46e5;">${c.Tema || 'GERAL'}</span>
-                    <h3 style="font-weight:800; font-size:1.3rem; margin:10px 0;">${c.Titulo}</h3>
-                    <p style="color:#64748b; font-size:0.95rem; line-height:1.5;">${c.Resumo}</p>
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl transition-all flex flex-col h-full group">
+                    ${c.url_capa ? `<img src="${c.url_capa}" style="width: 100%; h-44; object-fit: cover; border-radius: 20px; margin-bottom: 20px;">` : ''}
+                    <span style="font-size: 10px; font-weight: 900; color: #7c3aed; text-transform: uppercase; margin-bottom: 10px;">${c.Tema || 'GERAL'}</span>
+                    <h3 style="font-weight: 800; font-size: 1.6rem; color: #1e293b; margin-bottom: 15px; text-transform: uppercase;">${c.Titulo}</h3>
+                    <p style="color: #64748b; line-height: 1.6; margin-bottom: 20px; flex-grow: 1;">${c.Resumo}</p>
+                    <div style="padding-top: 15px; border-top: 1px solid #f1f5f9; display: flex; justify-content: end;">
+                        <a href="${c.Url}" target="_blank" style="color: #4f46e5; font-weight: 900; font-size: 12px; text-decoration: none; display: flex; items-center; gap: 5px;">
+                            LER NO GEMINI ↗
+                        </a>
+                    </div>
                 </div>
             `).join('');
         }
@@ -81,10 +85,23 @@
             const t = document.getElementById('novoTitulo').value;
             const r = document.getElementById('novoResumo').value;
             const tema = document.getElementById('novoTema').value;
-            // Incluindo Tema para evitar erro de constraint
-            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r, Tema: tema }]);
-            if (error) alert(error.message);
-            else { fecharModal(); carregar(); }
+            const link = document.getElementById('novoLink').value;
+
+            // Inserindo todos os campos necessários para evitar o erro de 'null value'
+            const { error } = await supabase.from('Histórias').insert([
+                { Titulo: t, Resumo: r, Tema: tema, Url: link }
+            ]);
+
+            if (error) {
+                alert("Erro ao salvar: " + error.message);
+            } else {
+                fecharModal();
+                carregar();
+                // Limpa campos
+                document.getElementById('novoTitulo').value = '';
+                document.getElementById('novoResumo').value = '';
+                document.getElementById('novoLink').value = '';
+            }
         }
 
         carregar();
