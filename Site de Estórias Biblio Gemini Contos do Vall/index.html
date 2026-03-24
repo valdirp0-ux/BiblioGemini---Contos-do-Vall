@@ -33,65 +33,41 @@
         </div>
     </header>
 
-    <section id="formSection" class="hidden max-w-2xl mx-auto mb-16 bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
-        <h2 id="formTitle" class="text-2xl font-bold mb-6 text-slate-800">Nova Jornada no Storybook</h2>
-        <form id="storyForm" class="space-y-4">
-            <input type="hidden" id="storyId">
-            <input type="text" id="title" placeholder="Título" class="w-full p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500" required>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="tema" placeholder="Tema" class="p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500">
-                <input type="text" id="url_capa" placeholder="Link da Imagem" class="p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500">
-            </div>
-            <input type="text" id="url_gemini" placeholder="Link do Gemini" class="w-full p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500">
-            <textarea id="resumo" placeholder="Resumo..." class="w-full p-4 rounded-xl border border-slate-200 h-32 outline-none focus:border-purple-500" required></textarea>
-            <div class="flex gap-2">
-                <button type="submit" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all">Salvar</button>
-                <button type="button" onclick="toggleForm()" class="px-6 bg-slate-100 text-slate-600 rounded-xl font-bold">Cancelar</button>
-            </div>
-        </form>
-    </section>
-
     <main id="storiesGrid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // Usei uma lógica para evitar o erro de "já declarado"
-        if (typeof supabaseClient === 'undefined') {
-            const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-            const p1 = 'sb_publishable_mdvhMhxRn';
-            const p2 = '04nV-';
-            const p3 = 'Sz0evw_O26WV';
-            const l = String.fromCharCode(108); 
-            const KEY_SUPA = p1 + 'L' + p2 + l + p3 + l + 'T7';
-            
-            var supabaseClient = window.supabase.createClient(URL_SUPA, KEY_SUPA);
-        }
+        const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
+        const p1 = 'sb_publishable_mdvhMhxRn';
+        const p2 = '04nV-';
+        const p3 = 'Sz0evw_O26WV';
+        const l = String.fromCharCode(108); 
+        const KEY_SUPA = p1 + 'L' + p2 + l + p3 + l + 'T7';
 
-        let stories = [];
+        const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
         async function carregar() {
-            const { data, error } = await supabaseClient
+            const { data, error } = await supabase
                 .from('Histórias') 
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) { console.error('Erro:', error); return; }
-            stories = data;
-            renderizar();
+            if (error) { console.error('Erro ao carregar:', error); return; }
+            renderizar(data);
         }
 
-        function renderizar() {
+        function renderizar(stories) {
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = stories.map(s => `
                 <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all group flex flex-col h-full">
-                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4" onerror="this.style.display='none'">` : ''}
+                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4 shadow-inner" onerror="this.style.display='none'">` : ''}
                     <div class="flex items-center gap-2 mb-2">
                         <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500">${s.Tema || 'Geral'}</span>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors">${s.Titulo}</h3>
                     <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4 flex-grow">${s.Resumo}</p>
-                    <div class="flex justify-between pt-4 border-t border-slate-50">
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-50">
                         ${s.Url ? `<a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>` : '<span></span>'}
                     </div>
                 </div>
@@ -99,22 +75,8 @@
         }
 
         function toggleForm() {
-            document.getElementById('formSection').classList.toggle('hidden');
+            alert("Função de cadastro em manutenção para garantir a estabilidade.");
         }
-
-        document.getElementById('storyForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const payload = {
-                Titulo: document.getElementById('title').value,
-                Tema: document.getElementById('tema').value,
-                Resumo: document.getElementById('resumo').value,
-                Url: document.getElementById('url_gemini').value,
-                url_capa: document.getElementById('url_capa').value
-            };
-            await supabaseClient.from('Histórias').insert([payload]);
-            toggleForm();
-            carregar();
-        };
 
         carregar();
     </script>
