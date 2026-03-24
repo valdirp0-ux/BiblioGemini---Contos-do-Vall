@@ -89,15 +89,36 @@
             `).join('');
         }
 
-        window.salvarConto = async function() {
-            const t = document.getElementById('novoTitulo').value;
-            const r = document.getElementById('novoResumo').value;
-            const link = document.getElementById('novoLink').value;
-            const capa = document.getElementById('novaCapa').value;
+      window.salvarConto = async function() {
+    // 1. Pega os valores dos campos do formulário
+    const t = document.getElementById('novoTitulo').value;
+    const r = document.getElementById('novoResumo').value;
+    const l = document.getElementById('novoLink').value;
+    const c = document.getElementById('novaCapa').value;
 
-            const { error } = await supa.from('Histórias').insert([{ Titulo: t, Resumo: r, Url: link, url_capa: capa }]);
-            if (!error) { fecharModal(); carregarContos(); }
+    // 2. Verifica se o básico foi preenchido
+    if(!t || !r) return alert("Por favor, preencha o Título e o Resumo.");
+
+    // 3. Tenta salvar no Supabase (Nomes corrigidos conforme seu banco)
+    const { error } = await supa.from('Histórias').insert([
+        { 
+            Titulo: t,      // 'T' maiúsculo conforme seu print
+            Resumo: r,      // 'R' maiúsculo conforme seu print
+            Url: l,         // 'U' maiúsculo conforme seu print
+            url_capa: c     // Tudo minúsculo conforme seu print
         }
+    ]);
+    
+    if (!error) {
+        alert("Conto salvo com sucesso!");
+        fecharModal();
+        carregarContos(); // Recarrega a estante
+        limpar();        // Limpa os campos
+    } else {
+        console.error("Erro detalhado ao salvar:", error);
+        alert("Erro ao salvar: " + error.message);
+    }
+}
 
         document.addEventListener('DOMContentLoaded', carregarContos);
     </script>
