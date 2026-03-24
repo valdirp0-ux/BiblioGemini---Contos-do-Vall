@@ -53,7 +53,10 @@
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) { console.error('Erro ao carregar:', error); return; }
+            if (error) { 
+                console.error('Erro ao carregar:', error); 
+                return; 
+            }
             renderizar(data);
         }
 
@@ -75,7 +78,7 @@
         }
 
         function toggleForm() {
-            alert("Função de cadastro em manutenção para garantir a estabilidade.");
+            alert("Botão clicado! O formulário de cadastro está em revisão técnica.");
         }
 
         carregar();
