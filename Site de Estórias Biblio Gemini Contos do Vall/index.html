@@ -50,70 +50,84 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-        const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
-        const supa = window.supabase.createClient(URL_S, KEY_S);
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
+    const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
+    const supa = window.supabase.createClient(URL_S, KEY_S);
 
-        window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
-        window.fecharModal = () => document.getElementById('modal').style.display = 'none';
+    window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
+    window.fecharModal = () => document.getElementById('modal').style.display = 'none';
 
-        async function carregarContos() {
-            const { data, error } = await supa.from('Histórias').select('*');
-            if (!error) renderizar(data);
+    async function carregarContos() {
+        // Busca simples sem filtros para garantir o carregamento
+        const { data, error } = await supa.from('Histórias').select('*');
+        if (error) {
+            console.error("Erro ao carregar:", error.message);
+        } else {
+            renderizar(data);
         }
+    }
 
-        function renderizar(contos) {
-            const grid = document.getElementById('storiesGrid');
-            grid.innerHTML = contos.map(c => `
-                <div class="card-conto">
-                    <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="img-quadro">
-                    <div class="conteudo">
-                        <div>
-                            <span class="tema-tag">${c.Tema || 'GERAL'}</span>
-                            <h3 class="titulo-conto">${c.Titulo}</h3>
-                            <p class="resumo-conto">${c.Resumo}</p>
-                        </div>
-                        <a href="${c.Url}" target="_blank" class="link-portal">ABRIR PORTAL ↗</a>
+    function renderizar(contos) {
+        const grid = document.getElementById('storiesGrid');
+        if (!contos || contos.length === 0) return;
+        
+        grid.innerHTML = contos.map(c => `
+            <div class="card-conto">
+                <img src="${c.url_capa || 'https://images.unsplash.com/photo-1464802686167-b939a67e06a1?w=400'}" class="img-quadro">
+                <div class="conteudo">
+                    <div>
+                        <span class="tema-tag">${c.Tema || 'GERAL'}</span>
+                        <h3 class="titulo-conto">${c.Titulo}</h3>
+                        <p class="resumo-conto">${c.Resumo}</p>
                     </div>
+                    <a href="${c.Url}" target="_blank" class="link-portal">ABRIR PORTAL ↗</a>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
+    }
 
-        window.salvarConto = async function() {
-            const t = document.getElementById('campoTitulo').value;
-            const tema = document.getElementById('campoTema').value; // Novo campo!
-            const r = document.getElementById('campoResumo').value;
-            const l = document.getElementById('campoLink').value;
-            const c = document.getElementById('campoCapa').value;
+    window.salvarConto = async function() {
+        const t = document.getElementById('campoTitulo').value;
+        const tema = document.getElementById('campoTema').value;
+        const r = document.getElementById('campoResumo').value;
+        const l = document.getElementById('campoLink').value;
+        const c = document.getElementById('campoCapa').value;
 
-            if(!t || !tema || !r) return alert("Preencha Título, Tema e Resumo!");
+        if(!t || !tema || !r) return alert("Por favor, preencha Título, Tema e Resumo!");
 
-            // Enviando o Tema para satisfazer o banco
-            const { error } = await supa.from('Histórias').insert([
-                { Titulo: t, Tema: tema, Resumo: r, Url: l, url_capa: c }
-            ]);
-
-            if (error) {
-                alert("Erro ao salvar: " + error.message);
-            } else {
-                alert("Salvo com sucesso!");
-                fecharModal();
-                carregarContos();
-                limpar();
+        // AJUSTE CRUCIAL: Nomes das colunas idênticos ao Supabase
+        const { error } = await supa.from('Histórias').insert([
+            { 
+                Titulo: t,      // 'T' Maiúsculo
+                Tema: tema,     // 'T' Maiúsculo
+                Resumo: r,      // 'R' Maiúsculo
+                Url: l,         // 'U' Maiúsculo
+                url_capa: c     // TUDO MINÚSCULO
             }
-        }
+        ]);
 
-        function limpar() {
-            document.getElementById('campoTitulo').value = '';
-            document.getElementById('campoTema').value = '';
-            document.getElementById('campoResumo').value = '';
-            document.getElementById('campoLink').value = '';
-            document.getElementById('campoCapa').value = '';
+        if (error) {
+            alert("Erro ao salvar: " + error.message);
+            console.error("Erro Supabase:", error);
+        } else {
+            alert("Conto '" + t + "' salvo com sucesso!");
+            fecharModal();
+            carregarContos();
+            limpar();
         }
+    }
 
-        document.addEventListener('DOMContentLoaded', carregarContos);
-    </script>
+    function limpar() {
+        document.getElementById('campoTitulo').value = '';
+        document.getElementById('campoTema').value = '';
+        document.getElementById('campoResumo').value = '';
+        document.getElementById('campoLink').value = '';
+        document.getElementById('campoCapa').value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', carregarContos);
+</script>
 </body>
 </html>
