@@ -6,60 +6,54 @@
     <title>CONTOS DO VALL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: sans-serif; background-color: #f8fafc; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; display: flex; flex-direction: column; align-items: center; padding: 40px 15px; }
         
-        .titulo-vall { font-size: 3rem; font-weight: 900; color: #1e293b; text-transform: uppercase; margin-bottom: 5px; }
-        .subtitulo { color: #64748b; font-style: italic; margin-bottom: 30px; }
-        .btn-novo { background: #4f46e5; color: white; padding: 10px 25px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; }
-        
-        /* A GRADE: 2 COLUNAS REAIS (ESQUERDA E DIREITA) */
+        /* CABEÇALHO */
+        .titulo-vall { font-size: 2.5rem; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: -1px; }
+        .subtitulo { color: #64748b; font-style: italic; margin-bottom: 25px; font-size: 0.9rem; }
+        .btn-novo { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; margin-bottom: 30px; }
+
+        /* A ESTANTE: 2 COLUNAS LADO A LADO */
         #storiesGrid { 
             display: grid; 
-            grid-template-cols: 1fr 1fr; /* Força duas colunas iguais */
+            grid-template-cols: 1fr 1fr; /* Força duas colunas: esquerda e direita */
             gap: 15px; 
             width: 100%; 
-            max-width: 1000px; 
-            margin-top: 40px; 
+            max-width: 900px; 
         }
 
-        /* O CARD: IMAGEM NA ESQUERDA, TEXTO NA DIREITA */
+        /* CARD COMPACTO (TIPO QUADRO) */
         .card-conto { 
             background: white; 
-            border-radius: 20px; 
+            border-radius: 18px; 
             border: 1px solid #e2e8f0; 
-            display: flex; /* Alinha imagem e texto lado a lado dentro do card */
-            overflow: hidden;
-            height: 160px; /* Altura fixa para todos ficarem iguais e pequenos */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            padding: 12px;
+            display: flex; 
+            gap: 12px; /* Espaço entre imagem e texto */
+            align-items: flex-start;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            min-height: 120px;
         }
 
-        .img-container {
-            width: 120px; /* Largura da imagem pequena na esquerda */
-            min-width: 120px;
-            height: 100%;
-        }
-
-        .img-container img {
-            width: 100%;
-            height: 100%;
+        /* MOLDURA DA IMAGEM PEQUENA */
+        .img-moldura {
+            width: 80px; 
+            height: 80px;
+            min-width: 80px;
+            border-radius: 12px;
             object-fit: cover;
+            background: #f1f5f9;
         }
 
-        .info-container {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .tema { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; }
-        .titulo { font-weight: 800; font-size: 1.1rem; color: #1e293b; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .resumo { font-size: 0.8rem; color: #64748b; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .info-box { display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
+        .tema-tag { font-size: 8px; font-weight: 900; color: #7c3aed; text-transform: uppercase; margin-bottom: 2px; }
+        .titulo-card { font-weight: 800; font-size: 0.95rem; color: #1e293b; line-height: 1.2; margin-bottom: 4px; }
+        .resumo-card { font-size: 0.75rem; color: #64748b; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         
-        .ler-btn { font-size: 10px; font-weight: 900; color: #4f46e5; text-decoration: none; margin-top: 8px; align-self: flex-end; }
+        .btn-abrir { font-size: 9px; font-weight: 900; color: #4f46e5; text-decoration: none; margin-top: 8px; text-transform: uppercase; }
 
-        @media (max-width: 800px) { #storiesGrid { grid-template-cols: 1fr; } } /* No celular vira 1 coluna */
+        /* No celular muito pequeno, vira 1 coluna para não esmagar o texto */
+        @media (max-width: 480px) { #storiesGrid { grid-template-cols: 1fr; } }
 
         #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 1000; }
     </style>
@@ -74,19 +68,19 @@
     <div id="storiesGrid"></div>
 
     <div id="modal">
-        <div style="background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 400px;">
-            <h2 style="font-weight: 900; margin-bottom: 20px;">Nova Jornada</h2>
-            <select id="novoTema" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
+        <div style="background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px;">
+            <h2 style="font-weight: 900; margin-bottom: 15px;">Nova Jornada</h2>
+            <select id="novoTema" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
                 <option value="METAFÍSICA">Metafísica</option>
                 <option value="ESPIRITUALIDADE">Espiritualidade</option>
                 <option value="FICÇÃO">Ficção</option>
             </select>
-            <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #e2e8f0; height: 80px;"></textarea>
-            <input type="text" id="novoLink" placeholder="Link do Gemini" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <div style="display: flex; gap: 10px;">
-                <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 12px; border-radius: 10px; font-weight: bold;">Salvar</button>
-                <button onclick="fecharModal()" style="padding: 12px 20px; background: #f1f5f9; border-radius: 10px;">Sair</button>
+            <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #e2e8f0; height: 60px;"></textarea>
+            <input type="text" id="novoLink" placeholder="Link do Gemini" style="width: 100%; padding: 8px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; gap: 8px;">
+                <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 10px; border-radius: 8px; font-weight: bold;">Salvar</button>
+                <button onclick="fecharModal()" style="padding: 10px; background: #f1f5f9; border-radius: 8px;">Sair</button>
             </div>
         </div>
     </div>
@@ -109,14 +103,12 @@
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = contos.map(c => `
                 <div class="card-conto">
-                    <div class="img-container">
-                        <img src="${c.url_capa || 'https://via.placeholder.com/150'}" alt="Capa">
-                    </div>
-                    <div class="info-container">
-                        <span class="tema">${c.Tema || 'GERAL'}</span>
-                        <h3 class="titulo">${c.Titulo}</h3>
-                        <p class="resumo">${c.Resumo}</p>
-                        <a href="${c.Url}" target="_blank" class="ler-btn">LER PORTAL ↗</a>
+                    <img src="${c.url_capa || 'https://via.placeholder.com/80'}" class="img-moldura">
+                    <div class="info-box">
+                        <span class="tema-tag">${c.Tema || 'GERAL'}</span>
+                        <h3 class="titulo-card">${c.Titulo}</h3>
+                        <p class="resumo-card">${c.Resumo}</p>
+                        <a href="${c.Url}" target="_blank" class="btn-abrir">ABRIR PORTAL ↗</a>
                     </div>
                 </div>
             `).join('');
