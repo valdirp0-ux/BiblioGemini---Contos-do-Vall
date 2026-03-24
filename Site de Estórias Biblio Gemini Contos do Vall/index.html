@@ -62,74 +62,86 @@
 
     window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
     window.fecharModal = () => document.getElementById('modal').style.display = 'none';
+// 1. Variável para guardar os contos na memória do navegador
+let todosOsContos = [];
 
-    async function carregarContos() {
-        // Busca simples sem filtros para garantir o carregamento
-        const { data, error } = await supa.from('Histórias').select('*');
-        if (error) {
-            console.error("Erro ao carregar:", error.message);
-        } else {
-            renderizar(data);
-        }
+async function carregarContos() {
+    const { data, error } = await supa.from('Histórias').select('*');
+    if (error) {
+        console.error("Erro Supabase:", error.message);
+    } else {
+        todosOsContos = data; // Guarda a lista vinda do banco
+        renderizar(data);     // Mostra tudo na tela
     }
+}
 
-    function renderizar(contos) {
-        const grid = document.getElementById('storiesGrid');
-        if (!contos || contos.length === 0) return;
-        
-        grid.innerHTML = contos.map(c => `
-            <div class="card-conto">
-                <img src="${c.url_capa || 'https://images.unsplash.com/photo-1464802686167-b939a67e06a1?w=400'}" class="img-quadro">
-                <div class="conteudo">
-                    <div>
-                        <span class="tema-tag">${c.Tema || 'GERAL'}</span>
-                        <h3 class="titulo-conto">${c.Titulo}</h3>
-                        <p class="resumo-conto">${c.Resumo}</p>
-                    </div>
-                    <a href="${c.Url}" target="_blank" class="link-portal">ABRIR PORTAL ↗</a>
+// 2. Função que faz a busca funcionar em tempo real
+window.filtrarContos = function() {
+    const termo = document.getElementById('inputBusca').value.toLowerCase();
+    
+    const filtrados = todosOsContos.filter(c => {
+        const titulo = (c.Titulo || "").toLowerCase();
+        const tema = (c.Tema || "").toLowerCase();
+        return titulo.includes(termo) || tema.includes(termo);
+    });
+
+    renderizar(filtrados);
+}
+
+function renderizar(contos) {
+    const grid = document.getElementById('storiesGrid');
+    if (!contos || contos.length === 0) {
+        grid.innerHTML = '<p style="color: #64748b; margin-top: 20px;">Nenhum conto encontrado...</p>';
+        return;
+    }
+    
+    grid.innerHTML = contos.map(c => `
+        <div class="card-conto">
+            <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="img-quadro">
+            <div class="conteudo">
+                <div>
+                    <span class="tema-tag">${c.Tema || 'GERAL'}</span>
+                    <h3 class="titulo-conto">${c.Titulo}</h3>
+                    <p class="resumo-conto">${c.Resumo}</p>
                 </div>
+                <a href="${c.Url}" target="_blank" class="link-portal">ABRIR PORTAL ↗</a>
             </div>
-        `).join('');
+        </div>
+    `).join('');
+}
+
+window.salvarConto = async function() {
+    const t = document.getElementById('campoTitulo').value;
+    const tema = document.getElementById('campoTema').value;
+    const r = document.getElementById('campoResumo').value;
+    const l = document.getElementById('campoLink').value;
+    const c = document.getElementById('campoCapa').value;
+
+    if(!t || !tema || !r) return alert("Preencha Título, Tema e Resumo!");
+
+    const { error } = await supa.from('Histórias').insert([
+        { Titulo: t, Tema: tema, Resumo: r, Url: l, url_capa: c }
+    ]);
+
+    if (error) {
+        alert("Erro ao salvar: " + error.message);
+    } else {
+        alert("Salvo com sucesso!");
+        fecharModal();
+        carregarContos();
+        limpar();
     }
+}
 
-    window.salvarConto = async function() {
-        const t = document.getElementById('campoTitulo').value;
-        const tema = document.getElementById('campoTema').value;
-        const r = document.getElementById('campoResumo').value;
-        const l = document.getElementById('campoLink').value;
-        const c = document.getElementById('campoCapa').value;
+function limpar() {
+    document.getElementById('campoTitulo').value = '';
+    document.getElementById('campoTema').value = '';
+    document.getElementById('campoResumo').value = '';
+    document.getElementById('campoLink').value = '';
+    document.getElementById('campoCapa').value = '';
+}
 
-        if(!t || !tema || !r) return alert("Por favor, preencha Título, Tema e Resumo!");
-
-        // AJUSTE CRUCIAL: Nomes das colunas idênticos ao Supabase
-        const { error } = await supa.from('Histórias').insert([
-            { 
-                Titulo: t,      // 'T' Maiúsculo
-                Tema: tema,     // 'T' Maiúsculo
-                Resumo: r,      // 'R' Maiúsculo
-                Url: l,         // 'U' Maiúsculo
-                url_capa: c     // TUDO MINÚSCULO
-            }
-        ]);
-
-        if (error) {
-            alert("Erro ao salvar: " + error.message);
-            console.error("Erro Supabase:", error);
-        } else {
-            alert("Conto '" + t + "' salvo com sucesso!");
-            fecharModal();
-            carregarContos();
-            limpar();
-        }
-    }
-
-    function limpar() {
-        document.getElementById('campoTitulo').value = '';
-        document.getElementById('campoTema').value = '';
-        document.getElementById('campoResumo').value = '';
-        document.getElementById('campoLink').value = '';
-        document.getElementById('campoCapa').value = '';
-    }
+document.addEventListener('DOMContentLoaded', carregarContos);
 
     document.addEventListener('DOMContentLoaded', carregarContos);
 </script>
