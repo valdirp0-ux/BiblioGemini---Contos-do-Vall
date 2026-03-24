@@ -64,12 +64,20 @@
         let stories = [];
         let editandoId = null;
 
-        async function carregar() {
-            const { data, error } = await supabase.from('Histórias').select('*').order('created_at', { ascending: false });
-            if (error) { console.error('Erro:', error); return; }
-            stories = data;
-            renderizar();
-        }
+       async function carregar() {
+    // Verifique se o nome está exatamente com H maiúsculo e acento:
+    const { data, error } = await supabase
+        .from('Histórias') 
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) { 
+        console.error('Erro:', error); 
+        return; 
+    }
+    stories = data;
+    renderizar();
+}
 
         function renderizar() {
             const grid = document.getElementById('storiesGrid');
