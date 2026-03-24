@@ -18,7 +18,7 @@
             <span class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase">✨ Bibliogemini</span>
         </div>
         <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tight text-slate-900">
-            Contos do <span class="gradient-text">Vall</span>
+            Contos do <span class="gradient-text">Valdir</span>
         </h1>
         <p class="text-xl md:text-2xl text-slate-500 italic font-medium max-w-2xl mx-auto leading-relaxed">
             "Onde a realidade se desdobra em narrativas."
@@ -34,107 +34,8 @@
     </header>
 
     <section id="formSection" class="hidden max-w-2xl mx-auto mb-16 bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
-        <h2 id="formTitle" class="text-2xl font-bold mb-6 text-slate-800">Nova Jornada</h2>
+        <h2 id="formTitle" class="text-2xl font-bold mb-6 text-slate-800">Nova Jornada no Storybook</h2>
         <form id="storyForm" class="space-y-4">
             <input type="hidden" id="storyId">
-            <input type="text" id="title" placeholder="Título do Conto" class="w-full p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500" required>
-            <textarea id="content" placeholder="A história começa aqui..." class="w-full p-4 rounded-xl border border-slate-200 h-48 outline-none focus:border-purple-500" required></textarea>
-            <div class="flex gap-2">
-                <button type="submit" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700">Salvar no Storybook</button>
-                <button type="button" onclick="toggleForm()" class="px-6 bg-slate-100 text-slate-600 rounded-xl font-bold">Cancelar</button>
-            </div>
-        </form>
-    </section>
-
-    <main id="storiesGrid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script>
-        // CONFIGURAÇÃO BLINDADA (Resolvendo o problema da letra L)
-        const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-        const p1 = 'sb_publishable_mdvhMhxRn';
-        const p2 = '04nV-';
-        const p3 = 'Sz0evw_O26WV';
-        const l = String.fromCharCode(108); // Gera o 'l' minúsculo puro
-        const KEY_SUPA = p1 + 'L' + p2 + l + p3 + l + 'T7';
-
-        window.supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
-
-        let stories = [];
-        let editandoId = null;
-
-     async function carregar() {
-    const { data, error } = await supabase
-        .from('Histórias') 
-        .select('*'); // Isso vai pegar Titulo, Tema, Resumo e as URLs
-
-    if (error) { console.error('Erro:', error); return; }
-    stories = data;
-    renderizar();
-}
-
-function renderizar() {
-    const grid = document.getElementById('storiesGrid');
-    grid.innerHTML = stories.map(s => `
-        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-            ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4">` : ''}
-            <div class="flex items-center gap-2 mb-2">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500">${s.Tema || 'Geral'}</span>
-            </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors">${s.Titulo}</h3>
-            <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4">${s.Resumo}</p>
-            <div class="flex justify-end gap-3 pt-4 border-t border-slate-50">
-                <a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>
-            </div>
-        </div>
-    `).join('');
-}
-
-        function toggleForm() {
-            const section = document.getElementById('formSection');
-            section.classList.toggle('hidden');
-            if (section.classList.contains('hidden')) {
-                document.getElementById('storyForm').reset();
-                editandoId = null;
-            }
-        }
-
-        async function editar(id) {
-            const s = stories.find(item => item.id == id);
-            document.getElementById('storyId').value = s.id;
-            document.getElementById('title').value = s.Título;
-            document.getElementById('content').value = s.História;
-            document.getElementById('formTitle').innerText = "Editar Conto";
-            toggleForm();
-            editandoId = id;
-        }
-
-       async function excluir(id) {
-    if (confirm('Deseja arquivar este conto permanentemente?')) {
-        await supabase.from('Histórias').delete().eq('id', id);
-        carregar();
-    }
-}
-
-        document.getElementById('storyForm').onsubmit = async (e) => {
-    e.preventDefault();
-    const payload = {
-        Título: document.getElementById('title').value,
-        História: document.getElementById('content').value
-    };
-
-    if (editandoId) {
-        await supabase.from('Histórias').update(payload).eq('id', editandoId);
-    } else {
-        await supabase.from('Histórias').insert([payload]);
-    }
-    
-    toggleForm();
-    carregar();
-};
-
-        carregar();
-    </script>
-</body>
-</html>
+            
+            <input type="text" id="title" placeholder="Título do Conto (ex: O Arvoredo)" class="w-full p-4 rounded-xl border border-slate-200 outline-none focus:border-purple-500
