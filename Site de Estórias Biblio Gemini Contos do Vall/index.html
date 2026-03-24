@@ -30,6 +30,10 @@
     <h1 class="titulo-vall">CONTOS DO VALL</h1>
     <p class="subtitulo">"Onde a realidade se desdobra em narrativas."</p>
     <button class="btn-novo" onclick="abrirModal()">+ Novo Conto</button>
+    <div style="width: 100%; max-width: 400px; margin-top: 20px;">
+    <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
+    style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+</div>
 
     <div id="storiesGrid"></div>
 
