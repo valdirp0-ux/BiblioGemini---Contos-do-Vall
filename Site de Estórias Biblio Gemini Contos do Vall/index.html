@@ -7,19 +7,49 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* CABEÇALHO */
         .titulo-vall { font-size: 2.8rem; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 5px; }
         .subtitulo { color: #64748b; font-style: italic; margin-bottom: 30px; }
-        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; }
-        
-        /* GRID DE DUAS COLUNAS */
-        #storiesGrid { display: grid; grid-template-cols: 1fr 1fr; gap: 20px; width: 100%; max-width: 1000px; margin-top: 40px; }
-        .card-conto { background: white; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; padding: 15px; gap: 15px; height: 180px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .img-quadro { width: 110px; min-width: 110px; height: 100%; border-radius: 12px; object-fit: cover; background: #f1f5f9; }
+        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; }
+        .btn-novo:hover { background: #4338ca; transform: scale(1.05); }
+
+        /* A ESTANTE: 2 COLUNAS */
+        #storiesGrid { 
+            display: grid; 
+            grid-template-cols: 1fr 1fr; 
+            gap: 20px; 
+            width: 100%; 
+            max-width: 1000px; 
+            margin-top: 40px; 
+        }
+
+        /* O CARD: COMPACTO COM IMAGEM À ESQUERDA */
+        .card-conto { 
+            background: white; 
+            border-radius: 20px; 
+            border: 1px solid #e2e8f0; 
+            display: flex; 
+            padding: 15px;
+            gap: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            height: 180px;
+        }
+
+        .img-quadro {
+            width: 110px;
+            min-width: 110px;
+            height: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #f1f5f9;
+        }
+
         .conteudo { display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; width: 100%; }
         .tema-tag { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; }
         .titulo-conto { font-weight: 800; font-size: 1.1rem; color: #1e293b; margin: 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .resumo-conto { font-size: 0.8rem; color: #64748b; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .link-portal { font-size: 10px; font-weight: 900; color: #4f46e5; text-decoration: none; align-self: flex-end; }
+        .link-portal { font-size: 10px; font-weight: 900; color: #4f46e5; text-decoration: none; text-transform: uppercase; align-self: flex-end; }
 
         @media (max-width: 768px) { #storiesGrid { grid-template-cols: 1fr; } }
         #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1000; }
@@ -36,57 +66,59 @@
 
     <div id="modal" onclick="if(event.target == this) fecharModal()">
         <div style="background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 400px;">
-            <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px;">Nova Jornada</h2>
-            <select id="novoTema" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px; color: #1e293b;">Nova Jornada</h2>
+            
+            <select id="novoTema" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc;">
                 <option value="METAFÍSICA">Metafísica</option>
                 <option value="ESPIRITUALIDADE">Espiritualidade</option>
                 <option value="FICÇÃO">Ficção</option>
             </select>
-            <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <input type="text" id="novaCapa" placeholder="Link da Imagem" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <textarea id="novoResumo" placeholder="Resumo..." style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0; height: 80px;"></textarea>
-            <input type="text" id="novoLink" placeholder="Link do Gemini" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+
+            <input type="text" id="novoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            
+            <input type="text" id="novaCapa" placeholder="Link da Imagem de Capa" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            
+            <textarea id="novoResumo" placeholder="Breve resumo..." style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0; height: 80px; resize: none;"></textarea>
+            
+            <input type="text" id="novoLink" placeholder="Link do Portal Gemini" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
             
             <div style="display: flex; gap: 10px;">
-                <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold;">Salvar</button>
-                <button onclick="fecharModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 14px; border-radius: 12px; font-weight: bold;">Sair</button>
+                <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer;">Salvar</button>
+                <button onclick="fecharModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 14px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer;">Sair</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // CONFIGURAÇÕES
-        const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-        const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
-        
-        // Criando o cliente com nome único para evitar erro de "já declarado"
-        const meuSupa = window.supabase.createClient(URL_S, KEY_S);
+        // Configurações Blindadas (Evita erro de declaração dupla)
+        const URL_PROJETO = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
+        const KEY_PROJETO = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
+        const conexaoSupa = window.supabase.createClient(URL_PROJETO, KEY_PROJETO);
 
-        window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
-        window.fecharModal = () => document.getElementById('modal').style.display = 'none';
+        window.abrirModal = function() { document.getElementById('modal').style.display = 'flex'; }
+        window.fecharModal = function() { document.getElementById('modal').style.display = 'none'; }
 
         async function carregarContos() {
-            // Nome da tabela exatamente como no Supabase
-            const { data, error } = await meuSupa.from('Histórias').select('*').order('created_at', { ascending: false });
-            
-            if (error) {
-                console.error("Erro ao carregar:", error.message);
-                return;
+            // Busca dados da tabela 'Histórias'
+            const { data, error } = await conexaoSupa.from('Histórias').select('*').order('created_at', { ascending: false });
+            if (!error) {
+                renderizar(data);
+            } else {
+                console.error("Erro Supabase:", error.message);
             }
-            renderizar(data);
         }
 
         function renderizar(contos) {
             const grid = document.getElementById('storiesGrid');
             if (!contos || contos.length === 0) {
-                grid.innerHTML = "<p>Nenhuma história encontrada.</p>";
+                grid.innerHTML = "<p class='col-span-2 text-center text-gray-400'>Nenhum conto encontrado.</p>";
                 return;
             }
 
             grid.innerHTML = contos.map(c => `
                 <div class="card-conto">
-                    <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="img-quadro">
+                    <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="img-quadro" alt="Capa">
                     <div class="conteudo">
                         <div>
                             <span class="tema-tag">${c.Tema || 'GERAL'}</span>
@@ -106,9 +138,10 @@
             const link = document.getElementById('novoLink').value;
             const capa = document.getElementById('novaCapa').value;
 
-            if(!t || !r) return alert("Preencha título e resumo!");
+            if(!t || !r) return alert("Por favor, preencha o Título e o Resumo.");
 
-            const { error } = await meuSupa.from('Histórias').insert([
+            // Insere na coluna url_capa que já existe no seu banco
+            const { error } = await conexaoSupa.from('Histórias').insert([
                 { Titulo: t, Resumo: r, Tema: tema, Url: link, url_capa: capa }
             ]);
             
@@ -128,8 +161,8 @@
             document.getElementById('novaCapa').value = '';
         }
 
-        // Inicia a busca assim que a página carrega
-        carregarContos();
+        // Garante que o carregamento só ocorra após a página estar pronta
+        document.addEventListener('DOMContentLoaded', carregarContos);
     </script>
 </body>
 </html>
