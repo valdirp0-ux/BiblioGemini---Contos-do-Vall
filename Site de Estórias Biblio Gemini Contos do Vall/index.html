@@ -64,17 +64,13 @@
         let stories = [];
         let editandoId = null;
 
-       async function carregar() {
-    // Verifique se o nome está exatamente com H maiúsculo e acento:
+     async function carregar() {
     const { data, error } = await supabase
         .from('Histórias') 
         .select('*')
         .order('created_at', { ascending: false });
 
-    if (error) { 
-        console.error('Erro:', error); 
-        return; 
-    }
+    if (error) { console.error('Erro detalhado:', error); return; }
     stories = data;
     renderizar();
 }
@@ -112,29 +108,29 @@
             editandoId = id;
         }
 
-        async function excluir(id) {
-            if (confirm('Deseja arquivar este conto permanentemente?')) {
-                await supabase.from('Histórias').delete().eq('id', id);
-                carregar();
-            }
-        }
+       async function excluir(id) {
+    if (confirm('Deseja arquivar este conto permanentemente?')) {
+        await supabase.from('Histórias').delete().eq('id', id);
+        carregar();
+    }
+}
 
         document.getElementById('storyForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const payload = {
-                Título: document.getElementById('title').value,
-                História: document.getElementById('content').value
-            };
+    e.preventDefault();
+    const payload = {
+        Título: document.getElementById('title').value,
+        História: document.getElementById('content').value
+    };
 
-            if (editandoId) {
-                await supabase.from('Histórias').update(payload).eq('id', editandoId);
-            } else {
-                await supabase.from('Histórias').insert([payload]);
-            }
-            
-            toggleForm();
-            carregar();
-        };
+    if (editandoId) {
+        await supabase.from('Histórias').update(payload).eq('id', editandoId);
+    } else {
+        await supabase.from('Histórias').insert([payload]);
+    }
+    
+    toggleForm();
+    carregar();
+};
 
         carregar();
     </script>
