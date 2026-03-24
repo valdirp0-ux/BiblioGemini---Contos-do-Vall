@@ -5,27 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CONTOS DO VALL</title>
     <meta property="og:title" content="CONTOS DO VALL">
-<meta property="og:description" content="Onde a realidade se desdobra em narrativas. Contos sobre Metafísica, Espiritualidade e Ficção.">
-<meta property="og:image" content="https://images.unsplash.com/photo-1464802686167-b939a67e06a1?q=80&w=1000">
-<meta property="og:url" content="https://project-4oghi.vercel.app">
-<meta property="og:type" content="website">
+    <meta property="og:description" content="Onde a realidade se desdobra em narrativas.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1464802686167-b939a67e06a1?q=80&w=1000">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
-        .titulo-vall { font-size: 2.8rem; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 5px; }
+        .titulo-vall { font-size: 2.8rem; font-weight: 900; color: #1e293b; text-transform: uppercase; margin-bottom: 5px; }
         .subtitulo { color: #64748b; font-style: italic; margin-bottom: 30px; }
-        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; }
-        
-        /* GRID DE 2 COLUNAS */
+        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; }
         #storiesGrid { display: grid; grid-template-cols: 1fr 1fr; gap: 20px; width: 100%; max-width: 1000px; margin-top: 40px; }
-        .card-conto { background: white; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; padding: 15px; gap: 15px; height: 180px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .card-conto { background: white; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; padding: 15px; gap: 15px; height: 180px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .img-quadro { width: 110px; min-width: 110px; height: 100%; border-radius: 12px; object-fit: cover; background: #f1f5f9; }
         .conteudo { display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; width: 100%; }
         .tema-tag { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; }
-        .titulo-conto { font-weight: 800; font-size: 1.1rem; color: #1e293b; margin: 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .resumo-conto { font-size: 0.8rem; color: #64748b; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .link-portal { font-size: 10px; font-weight: 900; color: #4f46e5; text-decoration: none; align-self: flex-end; }
-
+        .titulo-conto { font-weight: 800; font-size: 1.1rem; color: #1e293b; }
+        .resumo-conto { font-size: 0.8rem; color: #64748b; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .link-portal { font-size: 10px; font-weight: 900; color: #4f46e5; text-transform: uppercase; text-decoration: none; align-self: flex-end; }
         @media (max-width: 768px) { #storiesGrid { grid-template-cols: 1fr; } }
         #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1000; }
     </style>
@@ -34,7 +29,6 @@
 
     <h1 class="titulo-vall">CONTOS DO VALL</h1>
     <p class="subtitulo">"Onde a realidade se desdobra em narrativas."</p>
-
     <button class="btn-novo" onclick="abrirModal()">+ Novo Conto</button>
 
     <div id="storiesGrid"></div>
@@ -42,10 +36,12 @@
     <div id="modal" onclick="if(event.target == this) fecharModal()">
         <div style="background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 400px;">
             <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px;">Nova Jornada</h2>
-            <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <input type="text" id="novaCapa" placeholder="Link da Imagem" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <textarea id="novoResumo" placeholder="Resumo..." style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0; height: 80px;"></textarea>
-            <input type="text" id="novoLink" placeholder="Link do Gemini" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            
+            <input type="text" id="campoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <input type="text" id="campoCapa" placeholder="Link da Imagem (URL)" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <textarea id="campoResumo" placeholder="Resumo..." style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0; height: 80px;"></textarea>
+            <input type="text" id="campoLink" placeholder="Link do Portal Gemini" style="width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            
             <div style="display: flex; gap: 10px;">
                 <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold;">Salvar</button>
                 <button onclick="fecharModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 14px; border-radius: 12px; font-weight: bold;">Sair</button>
@@ -63,13 +59,9 @@
         window.fecharModal = () => document.getElementById('modal').style.display = 'none';
 
         async function carregarContos() {
-            // REMOVIDO O '.order()' QUE ESTAVA DANDO ERRO NO CONSOLE
             const { data, error } = await supa.from('Histórias').select('*');
-            if (error) {
-                console.error("Erro Supabase:", error.message);
-            } else {
-                renderizar(data);
-            }
+            if (error) console.error("Erro ao carregar:", error.message);
+            else renderizar(data);
         }
 
         function renderizar(contos) {
@@ -89,36 +81,33 @@
             `).join('');
         }
 
-      window.salvarConto = async function() {
-    // 1. Pega os valores dos campos do formulário
-    const t = document.getElementById('novoTitulo').value;
-    const r = document.getElementById('novoResumo').value;
-    const l = document.getElementById('novoLink').value;
-    const c = document.getElementById('novaCapa').value;
+        window.salvarConto = async function() {
+            // Pegando os valores pelos IDs novos e fixos
+            const t = document.getElementById('campoTitulo').value;
+            const r = document.getElementById('campoResumo').value;
+            const l = document.getElementById('campoLink').value;
+            const c = document.getElementById('campoCapa').value;
 
-    // 2. Verifica se o básico foi preenchido
-    if(!t || !r) return alert("Por favor, preencha o Título e o Resumo.");
+            if(!t || !r) return alert("Preencha título e resumo!");
 
-    // 3. Tenta salvar no Supabase (Nomes corrigidos conforme seu banco)
-    const { error } = await supa.from('Histórias').insert([
-        { 
-            Titulo: t,      // 'T' maiúsculo conforme seu print
-            Resumo: r,      // 'R' maiúsculo conforme seu print
-            Url: l,         // 'U' maiúsculo conforme seu print
-            url_capa: c     // Tudo minúsculo conforme seu print
+            // Inserindo com os nomes exatos das colunas do seu banco
+            const { error } = await supa.from('Histórias').insert([
+                { Titulo: t, Resumo: r, Url: l, url_capa: c }
+            ]);
+
+            if (error) {
+                alert("Erro ao salvar: " + error.message);
+            } else {
+                alert("Salvo com sucesso!");
+                fecharModal();
+                carregarContos();
+                // Limpa campos
+                document.getElementById('campoTitulo').value = '';
+                document.getElementById('campoResumo').value = '';
+                document.getElementById('campoLink').value = '';
+                document.getElementById('campoCapa').value = '';
+            }
         }
-    ]);
-    
-    if (!error) {
-        alert("Conto salvo com sucesso!");
-        fecharModal();
-        carregarContos(); // Recarrega a estante
-        limpar();        // Limpa os campos
-    } else {
-        console.error("Erro detalhado ao salvar:", error);
-        alert("Erro ao salvar: " + error.message);
-    }
-}
 
         document.addEventListener('DOMContentLoaded', carregarContos);
     </script>
