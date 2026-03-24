@@ -59,7 +59,7 @@
         const l = String.fromCharCode(108); // Gera o 'l' minúsculo puro
         const KEY_SUPA = p1 + 'L' + p2 + l + p3 + l + 'T7';
 
-        const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
+        window.supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
         let stories = [];
         let editandoId = null;
