@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: sans-serif; background-color: #f8fafc; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; }
-        /* PADRÃO VISUAL APROVADO */
+        /* DESIGN APROVADO */
         .bibliogemini { font-size: 14px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         .titulo-vall { font-size: 4.5rem; font-weight: 900; color: #1e293b; letter-spacing: -0.05em; text-transform: uppercase; margin-bottom: 20px; }
         .subtitulo { color: #64748b; font-style: italic; font-size: 1.2rem; margin-bottom: 50px; }
@@ -52,16 +52,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Use 'const' apenas uma vez para evitar o erro de 'already been declared'
         const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
         const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
-        const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
+        const supaClient = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
-        // FUNÇÕES GLOBAIS PARA RESOLVER ERRO DE "NOT DEFINED"
-        window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
-        window.fecharModal = () => document.getElementById('modal').style.display = 'none';
+        // Funções anexadas ao 'window' para garantir que o HTML as encontre
+        window.abrirModal = () => { document.getElementById('modal').style.display = 'flex'; };
+        window.fecharModal = () => { document.getElementById('modal').style.display = 'none'; };
 
         async function carregar() {
-            const { data, error } = await supabase.from('Histórias').select('*');
+            const { data, error } = await supaClient.from('Histórias').select('*');
             if (!error) renderizar(data);
         }
 
@@ -71,7 +72,7 @@
                 <div style="background: white; padding: 35px; border-radius: 40px; border: 1px solid #f1f5f9; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column;">
                     ${c.url_capa ? `<img src="${c.url_capa}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 25px; margin-bottom: 25px;">` : ''}
                     <span style="font-size: 10px; font-weight: 900; color: #7c3aed; text-transform: uppercase; margin-bottom: 10px;">${c.Tema || 'GERAL'}</span>
-                    <h3 style="font-weight: 800; font-size: 1.6rem; color: #1e293b; margin-bottom: 15px; text-transform: uppercase;">${c.Titulo}</h3>
+                    <h3 style="font-weight: 800; font-size: 1.6rem; color: #1e293b; margin-bottom: 15px;">${c.Titulo}</h3>
                     <p style="color: #64748b; line-height: 1.7; margin-bottom: 25px; flex-grow: 1;">${c.Resumo}</p>
                     <div style="text-align: right;">
                         <a href="${c.Url}" target="_blank" style="color: #4f46e5; font-weight: 900; font-size: 13px; text-decoration: none;">LER NO GEMINI ↗</a>
@@ -86,8 +87,7 @@
             const tema = document.getElementById('novoTema').value;
             const link = document.getElementById('novoLink').value;
 
-            // ENVIA O TEMA PARA O SUPABASE ACEITAR O SALVAMENTO
-            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r, Tema: tema, Url: link }]);
+            const { error } = await supaClient.from('Histórias').insert([{ Titulo: t, Resumo: r, Tema: tema, Url: link }]);
             if (error) alert("Erro: " + error.message);
             else { fecharModal(); carregar(); }
         }
