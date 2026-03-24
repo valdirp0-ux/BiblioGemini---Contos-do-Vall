@@ -30,7 +30,7 @@
 
     <div id="storiesGrid"></div>
 
-   <div id="modal">
+  <div id="modal">
     <div style="background: white; padding: 40px; border-radius: 30px; width: 90%; max-width: 500px;">
         <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 25px;">Nova Jornada</h2>
         
@@ -80,19 +80,24 @@
             `).join('');
         }
 
-        async function salvarConto() {
-            const t = document.getElementById('novoTitulo').value;
-            const r = document.getElementById('novoResumo').value;
-            const tema = document.getElementById('novoTema').value;
-            const link = document.getElementById('novoLink').value;
+       async function salvarConto() {
+    const t = document.getElementById('novoTitulo').value;
+    const r = document.getElementById('novoResumo').value;
+    const tema = document.getElementById('novoTema').value; // Pega o tema selecionado
+    const link = document.getElementById('novoLink').value; // Pega o link
 
-            const { error } = await supabase.from('Histórias').insert([
-                { Titulo: t, Resumo: r, Tema: tema, Url: link }
-            ]);
+    // AGORA ENVIA O TEMA E A URL, RESOLVENDO O ERRO
+    const { error } = await supabase.from('Histórias').insert([
+        { Titulo: t, Resumo: r, Tema: tema, Url: link }
+    ]);
 
-            if (error) alert("Erro: " + error.message);
-            else { fecharModal(); carregar(); }
-        }
+    if (error) {
+        alert("Erro ao salvar: " + error.message);
+    } else {
+        fecharModal();
+        carregar(); // Atualiza a página com o novo conto
+    }
+}
         carregar();
     </script>
 </body>
