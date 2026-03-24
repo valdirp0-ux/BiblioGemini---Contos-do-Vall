@@ -53,49 +53,40 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // Variável isolada para evitar erro de declaração dupla
-        var portal_valdir_client;
+        const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
+        const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
+        const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
-        function getClient() {
-            if (!portal_valdir_client) {
-                const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-                const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
-                portal_valdir_client = window.supabase.createClient(URL_SUPA, KEY_SUPA);
-            }
-            return portal_valdir_client;
-        }
+        let stories = [];
 
+        // --- FUNÇÕES QUE VOCÊ ENVIOU ---
         async function carregar() {
-            // CORREÇÃO CRÍTICA: Created_at com C maiúsculo para evitar erro 400
-            const { data, error } = await getClient()
+            const { data, error } = await supabase
                 .from('Histórias') 
-                .select('*')
-                .order('Created_at', { ascending: false });
+                .select('*'); 
 
-            if (error) { 
-                console.error('Erro Supabase:', error); 
-                document.getElementById('storiesGrid').innerHTML = `<p class="text-red-500">Erro: ${error.message}</p>`;
-                return; 
-            }
-            renderizar(data);
+            if (error) { console.error('Erro:', error); return; }
+            stories = data;
+            renderizar();
         }
 
-        function renderizar(stories) {
+        function renderizar() {
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = stories.map(s => `
                 <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all group flex flex-col h-full">
-                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4" onerror="this.style.display='none'">` : ''}
+                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4 shadow-inner">` : ''}
                     <div class="flex items-center gap-2 mb-2">
                         <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500">${s.Tema || 'Geral'}</span>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors">${s.Titulo}</h3>
                     <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4 flex-grow">${s.Resumo}</p>
-                    <div class="flex items-center justify-between pt-4 border-t border-slate-50">
-                        ${s.Url ? `<a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>` : '<span></span>'}
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-50">
+                        <a href="${s.Url}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>
                     </div>
                 </div>
             `).join('');
         }
+        // ------------------------------
 
         function abrirModal() { document.getElementById('modalCadastro').classList.remove('hidden'); }
         function fecharModal() { document.getElementById('modalCadastro').classList.add('hidden'); }
@@ -104,7 +95,7 @@
             const t = document.getElementById('novoTitulo').value;
             const r = document.getElementById('novoResumo').value;
             
-            const { error } = await getClient().from('Histórias').insert([{ Titulo: t, Resumo: r }]);
+            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r }]);
             
             if (error) alert("Erro ao salvar: " + error.message);
             else { fecharModal(); carregar(); }
