@@ -6,56 +6,58 @@
     <title>CONTOS DO VALL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; display: flex; flex-direction: column; align-items: center; padding: 40px 15px; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
         
         /* CABEÇALHO */
-        .titulo-vall { font-size: 2.5rem; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: -1px; }
-        .subtitulo { color: #64748b; font-style: italic; margin-bottom: 25px; font-size: 0.9rem; }
-        .btn-novo { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; margin-bottom: 30px; }
+        .titulo-vall { font-size: 2.8rem; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 5px; }
+        .subtitulo { color: #64748b; font-style: italic; margin-bottom: 30px; }
+        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; }
+        .btn-novo:hover { background: #4338ca; transform: scale(1.05); }
 
-        /* A ESTANTE: 2 COLUNAS LADO A LADO */
+        /* A ESTANTE: 2 COLUNAS (DIREITA E ESQUERDA) */
         #storiesGrid { 
             display: grid; 
-            grid-template-cols: 1fr 1fr; /* Força duas colunas: esquerda e direita */
-            gap: 15px; 
+            grid-template-cols: 1fr 1fr; /* Força dois itens por linha */
+            gap: 20px; 
             width: 100%; 
-            max-width: 900px; 
+            max-width: 1000px; 
+            margin-top: 40px; 
         }
 
-        /* CARD COMPACTO (TIPO QUADRO) */
+        /* O CARD: COMPACTO "TIPO QUADRO" */
         .card-conto { 
             background: white; 
-            border-radius: 18px; 
+            border-radius: 20px; 
             border: 1px solid #e2e8f0; 
-            padding: 12px;
             display: flex; 
-            gap: 12px; /* Espaço entre imagem e texto */
-            align-items: flex-start;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-            min-height: 120px;
+            padding: 15px;
+            gap: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+            height: 180px; /* Altura fixa para alinhar a estante */
         }
+        .card-conto:hover { border-color: #4f46e5; transform: translateY(-5px); }
 
-        /* MOLDURA DA IMAGEM PEQUENA */
-        .img-moldura {
-            width: 80px; 
-            height: 80px;
-            min-width: 80px;
+        /* IMAGEM PEQUENA */
+        .img-quadro {
+            width: 100px;
+            min-width: 100px;
+            height: 100%;
             border-radius: 12px;
             object-fit: cover;
             background: #f1f5f9;
         }
 
-        .info-box { display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
-        .tema-tag { font-size: 8px; font-weight: 900; color: #7c3aed; text-transform: uppercase; margin-bottom: 2px; }
-        .titulo-card { font-weight: 800; font-size: 0.95rem; color: #1e293b; line-height: 1.2; margin-bottom: 4px; }
-        .resumo-card { font-size: 0.75rem; color: #64748b; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .conteudo { display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+        .tema-tag { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; }
+        .titulo-conto { font-weight: 800; font-size: 1.1rem; color: #1e293b; margin: 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .resumo-conto { font-size: 0.8rem; color: #64748b; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         
-        .btn-abrir { font-size: 9px; font-weight: 900; color: #4f46e5; text-decoration: none; margin-top: 8px; text-transform: uppercase; }
+        .link-portal { font-size: 10px; font-weight: 900; color: #4f46e5; text-decoration: none; text-transform: uppercase; align-self: flex-end; }
 
-        /* No celular muito pequeno, vira 1 coluna para não esmagar o texto */
-        @media (max-width: 480px) { #storiesGrid { grid-template-cols: 1fr; } }
+        @media (max-width: 768px) { #storiesGrid { grid-template-cols: 1fr; } } /* Ajuste para celular */
 
-        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 1000; }
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1000; }
     </style>
 </head>
 <body>
@@ -67,35 +69,38 @@
 
     <div id="storiesGrid"></div>
 
-    <div id="modal">
-        <div style="background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px;">
-            <h2 style="font-weight: 900; margin-bottom: 15px;">Nova Jornada</h2>
-            <select id="novoTema" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    <div id="modal" onclick="if(event.target == this) fecharModal()">
+        <div style="background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+            <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px; color: #1e293b;">Nova Jornada</h2>
+            <select id="novoTema" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc;">
                 <option value="METAFÍSICA">Metafísica</option>
                 <option value="ESPIRITUALIDADE">Espiritualidade</option>
                 <option value="FICÇÃO">Ficção</option>
             </select>
-            <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #e2e8f0; height: 60px;"></textarea>
-            <input type="text" id="novoLink" placeholder="Link do Gemini" style="width: 100%; padding: 8px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="display: flex; gap: 8px;">
-                <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 10px; border-radius: 8px; font-weight: bold;">Salvar</button>
-                <button onclick="fecharModal()" style="padding: 10px; background: #f1f5f9; border-radius: 8px;">Sair</button>
+            <input type="text" id="novoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <textarea id="novoResumo" placeholder="Breve resumo..." style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; height: 100px; resize: none;"></textarea>
+            <input type="text" id="novoLink" placeholder="Link do Portal (URL)" style="width: 100%; padding: 12px; margin-bottom: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer;">Criar Conto</button>
+                <button onclick="fecharModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 14px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer;">Sair</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Configuração do Supabase (Corrigida para evitar erro de declaração dupla)
         const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
         const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
-        const supaClient = window.supabase.createClient(URL_SUPA, KEY_SUPA);
+        const clientSupa = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
-        window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
-        window.fecharModal = () => document.getElementById('modal').style.display = 'none';
+        // Funções Globais (Corrigidas para serem encontradas pelo HTML)
+        window.abrirModal = function() { document.getElementById('modal').style.display = 'flex'; }
+        window.fecharModal = function() { document.getElementById('modal').style.display = 'none'; }
 
-        async function carregar() {
-            const { data, error } = await supaClient.from('Histórias').select('*');
+        async function carregarContos() {
+            const { data, error } = await clientSupa.from('Histórias').select('*').order('created_at', { ascending: false });
             if (!error) renderizar(data);
         }
 
@@ -103,12 +108,14 @@
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = contos.map(c => `
                 <div class="card-conto">
-                    <img src="${c.url_capa || 'https://via.placeholder.com/80'}" class="img-moldura">
-                    <div class="info-box">
-                        <span class="tema-tag">${c.Tema || 'GERAL'}</span>
-                        <h3 class="titulo-card">${c.Titulo}</h3>
-                        <p class="resumo-card">${c.Resumo}</p>
-                        <a href="${c.Url}" target="_blank" class="btn-abrir">ABRIR PORTAL ↗</a>
+                    <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="img-quadro" alt="Capa">
+                    <div class="conteudo">
+                        <div>
+                            <span class="tema-tag">${c.Tema || 'GERAL'}</span>
+                            <h3 class="titulo-conto">${c.Titulo}</h3>
+                            <p class="resumo-conto">${c.Resumo}</p>
+                        </div>
+                        <a href="${c.Url}" target="_blank" class="link-portal">ABRIR PORTAL ↗</a>
                     </div>
                 </div>
             `).join('');
@@ -119,10 +126,24 @@
             const r = document.getElementById('novoResumo').value;
             const tema = document.getElementById('novoTema').value;
             const link = document.getElementById('novoLink').value;
-            const { error } = await supaClient.from('Histórias').insert([{ Titulo: t, Resumo: r, Tema: tema, Url: link }]);
-            if (!error) { fecharModal(); carregar(); }
+
+            if(!t || !r) return alert("Preencha título e resumo!");
+
+            const { error } = await clientSupa.from('Histórias').insert([{ Titulo: t, Resumo: r, Tema: tema, Url: link }]);
+            
+            if (!error) {
+                fecharModal();
+                carregarContos();
+                document.getElementById('novoTitulo').value = '';
+                document.getElementById('novoResumo').value = '';
+                document.getElementById('novoLink').value = '';
+            } else {
+                alert("Erro ao salvar: " + error.message);
+            }
         }
-        carregar();
+
+        // Inicia a aplicação
+        carregarContos();
     </script>
 </body>
 </html>
