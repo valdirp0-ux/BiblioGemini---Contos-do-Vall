@@ -9,6 +9,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         .gradient-text { background: linear-gradient(135deg, #1e293b 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        #modalCadastro { background: rgba(0,0,0,0.5); }
     </style>
 </head>
 <body class="p-4 md:p-10">
@@ -27,7 +28,7 @@
         <div class="mt-12 flex flex-col md:flex-row items-center justify-center gap-4">
             <input type="text" id="searchInput" placeholder="Pesquisar portais..." 
                 class="w-full md:w-96 px-6 py-4 rounded-2xl border border-slate-200 bg-white shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all">
-            <button onclick="alert('Sistema de cadastro em manutenção')" class="w-full md:w-auto px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg hover:bg-indigo-700 transition-all">
+            <button onclick="abrirModal()" class="w-full md:w-auto px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg hover:bg-indigo-700 transition-all">
                 + Novo Conto
             </button>
         </div>
@@ -35,27 +36,45 @@
 
     <main id="storiesGrid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
 
+    <div id="modalCadastro" class="fixed inset-0 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6">Nova Jornada</h2>
+            <div class="space-y-4">
+                <input type="text" id="novoTitulo" placeholder="Título do Conto" class="w-full p-4 border rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+                <textarea id="novoResumo" placeholder="A história começa aqui..." class="w-full p-4 border rounded-xl h-32 outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                <div class="flex gap-4">
+                    <button onclick="salvarConto()" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold">Salvar no Storybook</button>
+                    <button onclick="fecharModal()" class="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // Nome de variável único para evitar conflitos no navegador
-        var supa_restauracao_v4;
+        // Variável isolada para evitar erro de declaração dupla
+        var portal_valdir_client;
+
+        function getClient() {
+            if (!portal_valdir_client) {
+                const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
+                const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
+                portal_valdir_client = window.supabase.createClient(URL_SUPA, KEY_SUPA);
+            }
+            return portal_valdir_client;
+        }
 
         async function carregar() {
-            const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-            const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
-
-            if (!supa_restauracao_v4) {
-                supa_restauracao_v4 = window.supabase.createClient(URL_SUPA, KEY_SUPA);
-            }
-
-            const { data, error } = await supa_restauracao_v4
+            // CORREÇÃO CRÍTICA: Created_at com C maiúsculo para evitar erro 400
+            const { data, error } = await getClient()
                 .from('Histórias') 
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('Created_at', { ascending: false });
 
             if (error) { 
-                console.error('Erro ao carregar:', error); 
+                console.error('Erro Supabase:', error); 
+                document.getElementById('storiesGrid').innerHTML = `<p class="text-red-500">Erro: ${error.message}</p>`;
                 return; 
             }
             renderizar(data);
@@ -65,7 +84,7 @@
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = stories.map(s => `
                 <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all group flex flex-col h-full">
-                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4 shadow-inner" onerror="this.style.display='none'">` : ''}
+                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4" onerror="this.style.display='none'">` : ''}
                     <div class="flex items-center gap-2 mb-2">
                         <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500">${s.Tema || 'Geral'}</span>
                     </div>
@@ -76,6 +95,19 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        function abrirModal() { document.getElementById('modalCadastro').classList.remove('hidden'); }
+        function fecharModal() { document.getElementById('modalCadastro').classList.add('hidden'); }
+
+        async function salvarConto() {
+            const t = document.getElementById('novoTitulo').value;
+            const r = document.getElementById('novoResumo').value;
+            
+            const { error } = await getClient().from('Histórias').insert([{ Titulo: t, Resumo: r }]);
+            
+            if (error) alert("Erro ao salvar: " + error.message);
+            else { fecharModal(); carregar(); }
         }
 
         carregar();
