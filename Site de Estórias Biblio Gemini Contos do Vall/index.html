@@ -7,13 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: sans-serif; background-color: #f8fafc; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
-        /* PADRÃO VISUAL EXATO DA ÚLTIMA IMAGEM */
+        /* DESIGN APROVADO */
         .bibliogemini { font-size: 14px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
         .titulo-vall { font-size: 4.2rem; font-weight: 900; color: #1e293b; letter-spacing: -0.05em; text-transform: uppercase; margin-bottom: 15px; }
         .subtitulo { color: #64748b; font-style: italic; font-size: 1.1rem; margin-bottom: 40px; }
-        
         .search-input { width: 100%; max-width: 450px; padding: 15px 25px; border-radius: 20px; border: 1px solid #e2e8f0; outline: none; margin-bottom: 30px; }
-        .btn-novo { background: #4f46e5; color: white; padding: 18px 45px; border-radius: 18px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-novo { background: #4f46e5; color: white; padding: 18px 45px; border-radius: 18px; font-weight: 800; cursor: pointer; }
         
         #storiesGrid { display: grid; grid-template-cols: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; width: 100%; max-width: 1200px; margin-top: 50px; }
         #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1000; }
@@ -30,27 +29,26 @@
 
     <div id="storiesGrid"></div>
 
-  <div id="modal">
-    <div style="background: white; padding: 40px; border-radius: 30px; width: 90%; max-width: 500px;">
-        <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 25px;">Nova Jornada</h2>
-        
-        <select id="novoTema" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-weight: 600;">
-            <option value="METAFÍSICA">Metafísica</option>
-            <option value="ESPIRITUALIDADE">Espiritualidade</option>
-            <option value="FICÇÃO">Ficção</option>
-        </select>
+    <div id="modal">
+        <div style="background: white; padding: 40px; border-radius: 30px; width: 90%; max-width: 500px;">
+            <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 25px;">Nova Jornada</h2>
+            
+            <select id="novoTema" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-weight: 600;">
+                <option value="METAFÍSICA">Metafísica</option>
+                <option value="ESPIRITUALIDADE">Espiritualidade</option>
+                <option value="FICÇÃO">Ficção</option>
+            </select>
 
-        <input type="text" id="novoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
-        <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; height: 100px;"></textarea>
-        
-        <input type="text" id="novoLink" placeholder="Link do Gemini (https://...)" style="width: 100%; padding: 12px; margin-bottom: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
-        
-        <div style="display: flex; gap: 10px;">
-            <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 15px; border-radius: 12px; font-weight: bold;">Salvar no Storybook</button>
-            <button onclick="fecharModal()" style="padding: 15px 25px; background: #f1f5f9; border-radius: 12px; color: #64748b; font-weight: 600;">Cancelar</button>
+            <input type="text" id="novoTitulo" placeholder="Título" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <textarea id="novoResumo" placeholder="Resumo" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #e2e8f0; height: 100px;"></textarea>
+            <input type="text" id="novoLink" placeholder="Link do Gemini" style="width: 100%; padding: 12px; margin-bottom: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="salvarConto()" style="flex: 1; background: #4f46e5; color: white; padding: 15px; border-radius: 12px; font-weight: bold;">Salvar no Storybook</button>
+                <button onclick="fecharModal()" style="padding: 15px 25px; background: #f1f5f9; border-radius: 12px; color: #64748b; font-weight: 600;">Cancelar</button>
+            </div>
         </div>
     </div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -58,13 +56,13 @@
         const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
         const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
-        function abrirModal() { document.getElementById('modal').style.display = 'flex'; }
-        function fecharModal() { document.getElementById('modal').style.display = 'none'; }
+        // Funções globais para evitar erro no console
+        window.abrirModal = function() { document.getElementById('modal').style.display = 'flex'; }
+        window.fecharModal = function() { document.getElementById('modal').style.display = 'none'; }
 
         async function carregar() {
             const { data, error } = await supabase.from('Histórias').select('*');
-            if (error) return;
-            renderizar(data);
+            if (!error) renderizar(data);
         }
 
         function renderizar(contos) {
@@ -80,24 +78,17 @@
             `).join('');
         }
 
-       async function salvarConto() {
-    const t = document.getElementById('novoTitulo').value;
-    const r = document.getElementById('novoResumo').value;
-    const tema = document.getElementById('novoTema').value; // Pega o tema selecionado
-    const link = document.getElementById('novoLink').value; // Pega o link
+        window.salvarConto = async function() {
+            const t = document.getElementById('novoTitulo').value;
+            const r = document.getElementById('novoResumo').value;
+            const tema = document.getElementById('novoTema').value;
+            const link = document.getElementById('novoLink').value;
 
-    // AGORA ENVIA O TEMA E A URL, RESOLVENDO O ERRO
-    const { error } = await supabase.from('Histórias').insert([
-        { Titulo: t, Resumo: r, Tema: tema, Url: link }
-    ]);
-
-    if (error) {
-        alert("Erro ao salvar: " + error.message);
-    } else {
-        fecharModal();
-        carregar(); // Atualiza a página com o novo conto
-    }
-}
+            // Enviando o campo Tema para o banco aceitar o salvamento
+            const { error } = await supabase.from('Histórias').insert([{ Titulo: t, Resumo: r, Tema: tema, Url: link }]);
+            if (error) alert("Erro: " + error.message);
+            else { fecharModal(); carregar(); }
+        }
         carregar();
     </script>
 </body>
