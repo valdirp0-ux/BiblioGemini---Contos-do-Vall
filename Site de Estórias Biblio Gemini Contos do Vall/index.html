@@ -15,44 +15,33 @@
 <body class="p-4 md:p-10">
 
     <header class="max-w-6xl mx-auto mb-16 text-center pt-10">
-        <div class="inline-flex items-center gap-2 mb-4">
-            <span class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase">✨ Bibliogemini</span>
-        </div>
         <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tight text-slate-900">
             Contos do <span class="gradient-text">Valdir</span>
         </h1>
-        <p class="text-xl md:text-2xl text-slate-500 italic font-medium max-w-2xl mx-auto leading-relaxed">
-            "Onde a realidade se desdobra em narrativas."
-        </p>
+        <p class="text-xl md:text-2xl text-slate-500 italic font-medium mb-12">"Onde a realidade se desdobra em narrativas."</p>
         
-        <div class="mt-12 flex flex-col md:flex-row items-center justify-center gap-4">
-            <input type="text" id="searchInput" placeholder="Pesquisar portais..." 
-                class="w-full md:w-96 px-6 py-4 rounded-2xl border border-slate-200 bg-white shadow-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all">
-            <button onclick="abrirModal()" class="w-full md:w-auto px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg hover:bg-indigo-700 transition-all">
-                + Novo Conto
-            </button>
+        <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+            <input type="text" id="searchInput" placeholder="Pesquisar portais..." class="w-full md:w-96 px-6 py-4 rounded-2xl border border-slate-200 outline-none focus:ring-2 focus:ring-purple-500">
+            <button onclick="abrirModal()" class="w-full md:w-auto px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg hover:bg-indigo-700 transition-all">+ Novo Conto</button>
         </div>
     </header>
 
     <main id="storiesGrid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
 
     <div id="modalCadastro" class="fixed inset-0 hidden flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl relative">
-            <h2 class="text-2xl font-bold mb-6 italic text-slate-800">Nova Jornada</h2>
+        <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-slate-800">Nova Jornada</h2>
             <div class="space-y-4">
-                <select id="novoTema" class="w-full p-4 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 bg-white">
+                <select id="novoTema" class="w-full p-4 border rounded-xl bg-white">
                     <option value="METAFÍSICA">Metafísica</option>
                     <option value="ESPIRITUALIDADE">Espiritualidade</option>
                     <option value="FICÇÃO">Ficção</option>
-                    <option value="OUTROS">Outros</option>
                 </select>
-                
-                <input type="text" id="novoTitulo" placeholder="Título do Conto" class="w-full p-4 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
-                <textarea id="novoResumo" placeholder="A história começa aqui..." class="w-full p-4 border border-slate-200 rounded-xl h-32 outline-none focus:ring-2 focus:ring-purple-500"></textarea>
-                
-                <div class="flex gap-4 pt-2">
-                    <button onclick="salvarConto()" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-colors">Salvar no Storybook</button>
-                    <button onclick="fecharModal()" class="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200">Cancelar</button>
+                <input type="text" id="novoTitulo" placeholder="Título do Conto" class="w-full p-4 border rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+                <textarea id="novoResumo" placeholder="Resumo da história..." class="w-full p-4 border rounded-xl h-32 outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                <div class="flex gap-4">
+                    <button onclick="salvarConto()" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700">Salvar</button>
+                    <button onclick="fecharModal()" class="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -63,47 +52,49 @@
     <script>
         const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
         const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
-        const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
+        
+        // Garantia de que o cliente só será criado se o script carregar
+        let supabase;
+        try {
+            supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
+        } catch (e) {
+            console.error("Erro ao carregar Supabase:", e);
+        }
 
+        // Funções de Interface
         function abrirModal() { document.getElementById('modalCadastro').classList.remove('hidden'); }
         function fecharModal() { document.getElementById('modalCadastro').classList.add('hidden'); }
 
+        // Carregar histórias (Lógica que traz a Cora)
         async function carregar() {
             const { data, error } = await supabase.from('Histórias').select('*');
-            if (error) { console.error(error); return; }
+            if (error) { console.error("Erro na busca:", error); return; }
             renderizar(data);
         }
 
         function renderizar(lista) {
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = lista.map(s => `
-                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col h-full">
-                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4 shadow-inner">` : ''}
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-purple-500 mb-2">${s.Tema || 'Geral'}</span>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex flex-col h-full hover:shadow-md transition-all">
+                    ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-48 object-cover rounded-2xl mb-4">` : ''}
+                    <span class="text-[10px] font-bold text-purple-500 mb-2 uppercase tracking-widest">${s.Tema || 'GERAL'}</span>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">${s.Titulo}</h3>
-                    <p class="text-slate-600 leading-relaxed mb-6 line-clamp-4 flex-grow">${s.Resumo}</p>
-                    <div class="flex justify-end pt-4 border-t border-slate-50">
-                        <a href="${s.Url || '#'}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline">Ler no Gemini</a>
-                    </div>
+                    <p class="text-slate-600 leading-relaxed mb-6 line-clamp-3 flex-grow">${s.Resumo}</p>
+                    <a href="${s.Url || '#'}" target="_blank" class="text-sm font-bold text-indigo-600 hover:underline mt-auto">Ler no Gemini</a>
                 </div>
             `).join('');
         }
 
+        // Salvar com o campo 'Tema' para não dar erro
         async function salvarConto() {
             const tema = document.getElementById('novoTema').value;
             const titulo = document.getElementById('novoTitulo').value;
             const resumo = document.getElementById('novoResumo').value;
-            
-            if(!titulo || !resumo) {
-                alert("Preencha título e resumo!");
-                return;
-            }
 
-            // Agora enviamos o 'Tema' para satisfazer a regra do banco de dados
-            const { error } = await supabase
-                .from('Histórias')
-                .insert([{ Titulo: titulo, Resumo: resumo, Tema: tema }]);
-            
+            const { error } = await supabase.from('Histórias').insert([
+                { Titulo: titulo, Resumo: resumo, Tema: tema }
+            ]);
+
             if (error) {
                 alert("Erro ao salvar: " + error.message);
             } else {
