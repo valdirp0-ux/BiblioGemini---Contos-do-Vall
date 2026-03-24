@@ -9,12 +9,12 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         .gradient-text { background: linear-gradient(135deg, #1e293b 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        #modalCadastro { background: rgba(0,0,0,0.5); z-index: 9999; }
+        #modalCadastro { background: rgba(0,0,0,0.6); z-index: 9999; }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
-    <header class="max-w-6xl mx-auto mb-16 text-center relative pt-10">
+    <header class="max-w-6xl mx-auto mb-16 text-center pt-10">
         <div class="inline-flex items-center gap-2 mb-4">
             <span class="text-xs font-bold tracking-[0.3em] text-slate-400 uppercase">✨ Bibliogemini</span>
         </div>
@@ -37,13 +37,13 @@
     <main id="storiesGrid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></main>
 
     <div id="modalCadastro" class="fixed inset-0 hidden flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl">
+        <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl relative">
             <h2 class="text-2xl font-bold mb-6 italic text-slate-800">Nova Jornada</h2>
             <div class="space-y-4">
                 <input type="text" id="novoTitulo" placeholder="Título do Conto" class="w-full p-4 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
                 <textarea id="novoResumo" placeholder="A história começa aqui..." class="w-full p-4 border border-slate-200 rounded-xl h-32 outline-none focus:ring-2 focus:ring-purple-500"></textarea>
-                <div class="flex gap-4">
-                    <button onclick="salvarConto()" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all">Salvar no Storybook</button>
+                <div class="flex gap-4 pt-2">
+                    <button onclick="salvarConto()" class="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-colors">Salvar no Storybook</button>
                     <button onclick="fecharModal()" class="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200">Cancelar</button>
                 </div>
             </div>
@@ -53,14 +53,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // Configuração segura do Supabase
+        // 1. Configuração Única (Evita erro de 'already declared')
         const URL_SUPA = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
         const KEY_SUPA = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
-        const supabase = window.supabase.createClient(URL_SUPA, KEY_SUPA);
+        const supabaseClient = window.supabase.createClient(URL_SUPA, KEY_SUPA);
 
-        let stories = [];
-
-        // Funções de Interface
+        // 2. Funções de Interface (Devem existir antes de serem chamadas pelo botão)
         function abrirModal() {
             document.getElementById('modalCadastro').classList.remove('hidden');
         }
@@ -69,23 +67,22 @@
             document.getElementById('modalCadastro').classList.add('hidden');
         }
 
-        // Funções de Dados (A que trouxe a Cora de volta)
+        // 3. Carregamento dos Dados (Sua função que traz a Cora)
         async function carregar() {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('Histórias') 
                 .select('*'); 
 
             if (error) { 
-                console.error('Erro ao carregar:', error); 
+                console.error('Erro Supabase:', error); 
                 return; 
             }
-            stories = data;
-            renderizar();
+            renderizar(data);
         }
 
-        function renderizar() {
+        function renderizar(lista) {
             const grid = document.getElementById('storiesGrid');
-            grid.innerHTML = stories.map(s => `
+            grid.innerHTML = lista.map(s => `
                 <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all group flex flex-col h-full">
                     ${s.url_capa ? `<img src="${s.url_capa}" class="w-full h-40 object-cover rounded-2xl mb-4 shadow-inner">` : ''}
                     <div class="flex items-center gap-2 mb-2">
@@ -100,5 +97,32 @@
             `).join('');
         }
 
+        // 4. Salvar Novo Cadastro
         async function salvarConto() {
-            const t = document.getElementById('novoTitulo').value;
+            const titulo = document.getElementById('novoTitulo').value;
+            const resumo = document.getElementById('novoResumo').value;
+            
+            if(!titulo || !resumo) {
+                alert("Por favor, preencha o título e o resumo.");
+                return;
+            }
+
+            const { error } = await supabaseClient
+                .from('Histórias')
+                .insert([{ Titulo: titulo, Resumo: resumo }]);
+            
+            if (error) {
+                alert("Erro ao salvar: " + error.message);
+            } else {
+                fecharModal();
+                document.getElementById('novoTitulo').value = '';
+                document.getElementById('novoResumo').value = '';
+                carregar(); // Recarrega para mostrar o novo conto na lista
+            }
+        }
+
+        // Inicia o carregamento
+        carregar();
+    </script>
+</body>
+</html>
