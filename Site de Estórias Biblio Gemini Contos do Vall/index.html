@@ -28,7 +28,7 @@
 <body>
 
     <h1 class="titulo-vall">CONTOS DO VALL</h1>
-    <p class="subtitulo">"Onde a realidade se desdobra em narrativas."</p>
+    <p class="subtitulo">"Onde os sonhos se transformam em estórias."</p>
     <button id="btnAdmin" class="btn-novo" onclick="abrirModal()" style="display: none;">+ Novo Conto</button>
     <div style="width: 100%; max-width: 400px; margin-top: 20px;">
     <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
@@ -60,20 +60,23 @@
     const KEY_S = 'SUA_KEY_AQUI'; // Verifique se sua KEY está correta aqui
     const supa = supabase.createClient(URL_S, KEY_S);
 
-    let todosOsContos = [];
+let todosOsContos = [];
 
     // 1. CARREGAR E LIMPAR CONTOS
     async function carregarContos() {
+        // Primeiro, fazemos a faxina para não carregar lixo
+        await supa.from('Histórias').delete().is('Titulo', null);
+        await supa.from('Histórias').delete().eq('Titulo', '');
+
+        // Agora buscamos os contos reais
         const { data, error } = await supa.from('Histórias').select('*');
+        
         if (error) {
             console.error("Erro Supabase:", error.message);
         } else {
-            todosOsContos = data;
-            renderizar(data);
-            
-            // Faxina: Remove automaticamente rascunhos vazios do banco
-            await supa.from('Histórias').delete().is('Titulo', null);
-            await supa.from('Histórias').delete().eq('Titulo', '');
+            // Inverte a ordem para o mais novo aparecer primeiro
+            todosOsContos = data.reverse(); 
+            renderizar(todosOsContos);
         }
     }
 
@@ -110,46 +113,10 @@
         });
     }
 
-    // 4. SALVAR NOVO CONTO (COM SENHA E TRAVA)
+    // 4. SALVAR NOVO CONTO
     window.salvarConto = async function() {
         const senha = prompt("Digite a chave de autor:");
         if (senha !== "vall51") {
             alert("Senha incorreta!");
             return;
         }
-
-        const t = document.getElementById('campoTitulo').value;
-        const r = document.getElementById('campoResumo').value;
-        const tema = document.getElementById('campoTema').value;
-        const link = document.getElementById('campoLink').value;
-        const capa = document.getElementById('campoCapa').value;
-
-        if (!t.trim()) {
-            alert("O título é obrigatório!");
-            return;
-        }
-
-        const { error } = await supa.from('Histórias').insert([
-            { Titulo: t, Resumo: r, Tema: tema, Url: link, url_capa: capa }
-        ]);
-
-        if (error) {
-            alert("Erro: " + error.message);
-        } else {
-            alert("Publicado!");
-            fecharModal();
-            carregarContos();
-        }
-    };
-
-    // 5. INICIALIZAÇÃO
-    carregarContos();
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('admin') === 'true') {
-        const btn = document.getElementById('btnAdmin');
-        if (btn) btn.style.display = 'block';
-    }
-</script>
-</body>
-</html>
