@@ -29,7 +29,7 @@
 
     <h1 class="titulo-vall">CONTOS DO VALL</h1>
     <p class="subtitulo">"Onde a realidade se desdobra em narrativas."</p>
-    <button class="btn-novo" onclick="abrirModal()">+ Novo Conto</button>
+    <button id="btnAdmin" class="btn-novo" onclick="abrirModal()" style="display: none;">+ Novo Conto</button>
     <div style="width: 100%; max-width: 400px; margin-top: 20px;">
     <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
     style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
@@ -114,7 +114,7 @@ window.salvarConto = async function() {
     const senhaAcesso = prompt("Digite a chave de autor para publicar:");
     
     // 2. Verifica a senha (SUBSTITUA 'SUA_SENHA_AQUI' pela senha que desejar)
-    if (senhaAcesso !== "SUA_SENHA_AQUI") {
+    if (senhaAcesso !== "vall51") {
         alert("Acesso negado. Apenas o Vall pode publicar histórias.");
         return; 
     }
@@ -158,6 +158,13 @@ function limpar() {
 document.addEventListener('DOMContentLoaded', carregarContos);
 
     document.addEventListener('DOMContentLoaded', carregarContos);
-</script>
+// PASSO 2: Lógica para mostrar o botão apenas para o Vall
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('admin') === 'true') {
+            const btn = document.getElementById('btnAdmin');
+            if (btn) btn.style.display = 'block';
+        }
+
+    </script>
 </body>
 </html>
