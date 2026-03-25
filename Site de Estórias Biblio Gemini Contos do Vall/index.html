@@ -149,24 +149,23 @@
 
     <div id="modal" onclick="if(event.target == this) fecharModal()">
         <div style="background: white; padding: 30px; border-radius: 28px; width: 95%; max-width: 420px;">
-            <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px;">Publicar no Portal</h2>
+            <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px; color: #1e293b;">Publicar no Portal</h2>
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="campoTitulo" placeholder="Título" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                <input type="text" id="campoTema" placeholder="Tema" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                <input type="text" id="campoCapa" placeholder="Link da Capa (URL)" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                <textarea id="campoResumo" placeholder="Resumo..." style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; height: 80px;"></textarea>
-                <input type="text" id="campoLink" placeholder="Link Gemini" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                <input type="text" id="campoTitulo" placeholder="Título" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <input type="text" id="campoTema" placeholder="Tema (Ex: Metafísica)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <input type="text" id="campoCapa" placeholder="Link da Capa (URL da Imagem)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <textarea id="campoResumo" placeholder="Breve resumo..." style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; height: 80px; resize: none;"></textarea>
+                <input type="text" id="campoLink" placeholder="Link do Conto (Gemini)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
             </div>
             <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 12px; border-radius: 8px; font-weight: bold;">Salvar</button>
-                <button onclick="fecharModal()" style="flex: 1; background: #eee; padding: 12px; border-radius: 8px;">Sair</button>
+                <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Salvar</button>
+                <button onclick="fecharModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Sair</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // CONFIGURAÇÕES DO BANCO
         const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
         const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7'; 
         
@@ -188,19 +187,19 @@
 
         async function carregarContos() {
             try {
-                // Nome da tabela com acento conforme seu Supabase
+                // Conecta na tabela 'Histórias' conforme o banco
                 const { data, error } = await supa.from('Histórias').select('*');
                 
                 if (error) throw error;
 
                 if (data) {
-                    // Remove linhas vazias e a linha "EMPTY" do print
+                    // Ignora a linha de teste vazia
                     todosOsContos = data.filter(c => c.Titulo && c.Titulo !== "EMPTY");
                     renderizar(todosOsContos);
                 }
             } catch (err) {
-                console.error("Erro de Conexão:", err.message);
-                document.getElementById('storiesGrid').innerHTML = "<p class='text-red-500 font-bold'>Erro ao conectar com o portal. Verifique sua chave API.</p>";
+                console.error("Erro Supabase:", err.message);
+                document.getElementById('storiesGrid').innerHTML = "<p class='text-red-500 font-bold'>Erro ao carregar dados do portal. Verifique a chave API.</p>";
             }
         }
 
@@ -212,14 +211,14 @@
                 const div = document.createElement('div');
                 div.className = 'story-card';
                 
-                // Tenta carregar a capa; se não existir, usa uma imagem padrão
-                const foto = c.url_capa || 'https://via.placeholder.com/150?text=Portal+Vall';
+                // Usa a coluna url_capa ou imagem padrão
+                const foto = c.url_capa || 'https://via.placeholder.com/150?text=Vall+Contos';
 
                 div.innerHTML = `
                     <img src="${foto}" class="story-img" onerror="this.src='https://via.placeholder.com/150?text=Erro'">
                     <div class="story-content">
                         <div>
-                            <span class="story-tag">${c.Tema || 'Conto'}</span>
+                            <span class="story-tag">${c.Tema || 'Geral'}</span>
                             <h2 class="story-title">${c.Titulo}</h2>
                             <p class="story-desc">${c.Resumo || ''}</p>
                         </div>
@@ -240,8 +239,8 @@
         };
 
         window.salvarConto = async function() {
-            const senha = prompt("Senha do Autor:");
-            if (senha !== "vall51") return alert("Senha incorreta!");
+            const senha = prompt("Chave de Acesso:");
+            if (senha !== "vall51") return alert("Acesso Negado!");
 
             const novoObj = {
                 Titulo: document.getElementById('campoTitulo').value,
@@ -254,9 +253,9 @@
             const { error } = await supa.from('Histórias').insert([novoObj]);
 
             if (error) {
-                alert("Erro ao salvar: " + error.message);
+                alert("Falha ao salvar: " + error.message);
             } else {
-                alert("História publicada com sucesso!");
+                alert("Nova jornada publicada!");
                 location.reload();
             }
         };
