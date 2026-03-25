@@ -72,21 +72,25 @@ async function carregarContos() {
     } else {
         todosOsContos = data; // Guarda a lista vinda do banco
         renderizar(data);     // Mostra tudo na tela
-       
+todosOsContos = data;
+        renderizar(data);
+        
+        // Faxina: Remove contos sem título que foram criados por erro
+        await supa.from('Histórias').delete().is('Titulo', null);
+        await supa.from('Histórias').delete().eq('Titulo', '');
+    }
+}
 
-// 2. Função que faz a busca funcionar em tempo real
+// 2. Função de busca (Para o campo de procurar funcionar)
 window.filtrarContos = function() {
-    const termo = document.getElementById('inputBusca').value.toLowerCase();
-    
+    const termo = document.getElementById('searchBox').value.toLowerCase();
     const filtrados = todosOsContos.filter(c => {
         const titulo = (c.Titulo || "").toLowerCase();
         const tema = (c.Tema || "").toLowerCase();
         return titulo.includes(termo) || tema.includes(termo);
-  return titulo.includes(termo) || tema.includes(termo);
     });
-
-    renderizar(filtrados); // O correto é filtrar os contos da busca
-}; // Aqui fecha a função filtrarContos
+    renderizar(filtrados);
+};
 
 function renderizar(contos) {
     const grid = document.getElementById('storiesGrid');
