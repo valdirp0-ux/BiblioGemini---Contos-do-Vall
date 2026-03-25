@@ -72,8 +72,6 @@
         async function carregarContos() {
             // Faxina antes de carregar
             await supa.from('Histórias').delete().is('Titulo', null);
-            await supa.from('Histórias').delete().eq('Titulo', '');
-
             const { data, error } = await supa.from('Histórias').select('*');
             if (error) {
                 console.error("Erro Supabase:", error.message);
