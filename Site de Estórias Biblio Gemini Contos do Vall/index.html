@@ -64,20 +64,21 @@
 
     let todosOsContos = [];
 
-    async function carregarContos() {
-        const { data, error } = await supa.from('Histórias').select('*');
-        
-        if (error) {
-            console.error("Erro Supabase:", error.message);
-        } else {
-            todosOsContos = data;
-            renderizar(data);
+   async function carregarContos() {
+    const { data, error } = await supa.from('Histórias').select('*');
+    
+    if (error) {
+        console.error("Erro Supabase:", error.message);
+    } else {
+        // 1. Guarda e mostra os dados (Apenas uma vez!)
+        todosOsContos = data;
+        renderizar(data);
 
-            // Faxina: Remove contos sem título criados por erro
-            await supa.from('Histórias').delete().is('Titulo', null);
-            await supa.from('Histórias').delete().eq('Titulo', '');
-        }
+        // 2. Faxina: Limpa o banco de dados
+        await supa.from('Histórias').delete().is('Titulo', null);
+        await supa.from('Histórias').delete().eq('Titulo', '');
     }
+}
         // 2. BUSCA (ID corrigido para inputBusca)
         window.filtrarContos = function() {
             const termo = document.getElementById('inputBusca').value.toLowerCase();
