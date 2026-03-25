@@ -120,50 +120,33 @@ window.salvarConto = async function() {
     }
 
     // 3. Se a senha estiver correta, ele coleta os dados e salva
-    const t = document.getElementById('novoTitulo').value;
-    const r = document.getElementById('novoResumo').value;
-    const tema = document.getElementById('novoTema').value;
-    const link = document.getElementById('novoLink').value;
-
-    const { error } = await supaClient.from('Histórias').insert([
-        { Titulo: t, Resumo: r, Tema: tema, Url: link }
+   const t = document.getElementById('campoTitulo').value;
+const r = document.getElementById('campoResumo').value;
+const tema = document.getElementById('campoTema').value;
+const link = document.getElementById('campoLink').value;
+const capa = document.getElementById('campoCapa').value;
+     // Substitua a partir daqui:
+    const { error } = await supa.from('Histórias').insert([
+        { Titulo: t, Resumo: r, Tema: tema, Url: link, url_capa: capa }
     ]);
-
-    if (error) {
-        alert("Erro: " + error.message);
-    } else {
-        fecharModal();
-        carregar();
-    }
-}
 
     if (error) {
         alert("Erro ao salvar: " + error.message);
     } else {
-        alert("Salvo com sucesso!");
-        fecharModal();
+        alert("Conto publicado com sucesso!");
+        window.fecharModal();
         carregarContos();
-        limpar();
     }
+};
+
+// --- INICIALIZAÇÃO ---
+carregarContos();
+
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('admin') === 'true') {
+    const btn = document.getElementById('btnAdmin');
+    if (btn) btn.style.display = 'block';
 }
-
-function limpar() {
-    document.getElementById('campoTitulo').value = '';
-    document.getElementById('campoTema').value = '';
-    document.getElementById('campoResumo').value = '';
-    document.getElementById('campoLink').value = '';
-    document.getElementById('campoCapa').value = '';
-}
-
-// Garante que os contos carreguem ao abrir o site
-        carregarContos(); 
-
-        // PASSO 2: Lógica do Modo Admin
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('admin') === 'true') {
-            const btn = document.getElementById('btnAdmin');
-            if (btn) btn.style.display = 'block';
-        }
-    </script>
+</script>
 </body>
 </html>
