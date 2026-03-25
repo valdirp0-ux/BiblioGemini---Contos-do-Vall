@@ -110,22 +110,22 @@ function renderizar(contos) {
     `).join('');
 }
 window.salvarConto = async function() {
-    // 1. Pede a senha ao usuário
+    // 1. Pede a senha
     const senhaAcesso = prompt("Digite a chave de autor para publicar:");
     
-    // 2. Verifica a senha (SUBSTITUA 'SUA_SENHA_AQUI' pela senha que desejar)
     if (senhaAcesso !== "vall51") {
         alert("Acesso negado. Apenas o Vall pode publicar histórias.");
         return; 
     }
 
-    // 3. Se a senha estiver correta, ele coleta os dados e salva
-   const t = document.getElementById('campoTitulo').value;
-const r = document.getElementById('campoResumo').value;
-const tema = document.getElementById('campoTema').value;
-const link = document.getElementById('campoLink').value;
-const capa = document.getElementById('campoCapa').value;
-     // Substitua a partir daqui:
+    // 2. Coleta os dados (IDs corrigidas conforme seu modal)
+    const t = document.getElementById('campoTitulo').value;
+    const r = document.getElementById('campoResumo').value;
+    const tema = document.getElementById('campoTema').value;
+    const link = document.getElementById('campoLink').value;
+    const capa = document.getElementById('campoCapa').value;
+
+    // 3. Envia para o Supabase (usando a variável 'supa' que você definiu)
     const { error } = await supa.from('Histórias').insert([
         { Titulo: t, Resumo: r, Tema: tema, Url: link, url_capa: capa }
     ]);
@@ -140,8 +140,10 @@ const capa = document.getElementById('campoCapa').value;
 };
 
 // --- INICIALIZAÇÃO ---
-carregarContos();
+// Esta linha faz os contos aparecerem na tela
+carregarContos(); 
 
+// Lógica para mostrar o botão de admin apenas com ?admin=true
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('admin') === 'true') {
     const btn = document.getElementById('btnAdmin');
