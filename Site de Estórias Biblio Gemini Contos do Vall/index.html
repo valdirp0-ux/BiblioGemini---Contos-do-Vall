@@ -57,112 +57,99 @@
    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-    const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
-    const supa = window.supabase.createClient(URL_S, KEY_S);
+    const KEY_S = 'SUA_KEY_AQUI'; // Verifique se sua KEY está correta aqui
+    const supa = supabase.createClient(URL_S, KEY_S);
 
-    window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
-    window.fecharModal = () => document.getElementById('modal').style.display = 'none';
-// 1. Variável para guardar os contos na memória do navegador
-let todosOsContos = [];
+    let todosOsContos = [];
 
-async function carregarContos() {
-    const { data, error } = await supa.from('Histórias').select('*');
-    if (error) {
-        console.error("Erro Supabase:", error.message);
-    } else {
-   todosOsContos = data;
-        renderizar(data);
-        
-        // Faxina: Remove contos sem título automaticamente
-        await supa.from('Histórias').delete().is('Titulo', null);
-        await supa.from('Histórias').delete().eq('Titulo', '');
+    // 1. CARREGAR E LIMPAR CONTOS
+    async function carregarContos() {
+        const { data, error } = await supa.from('Histórias').select('*');
+        if (error) {
+            console.error("Erro Supabase:", error.message);
+        } else {
+            todosOsContos = data;
+            renderizar(data);
+            
+            // Faxina: Remove automaticamente rascunhos vazios do banco
+            await supa.from('Histórias').delete().is('Titulo', null);
+            await supa.from('Histórias').delete().eq('Titulo', '');
+        }
     }
-}
 
-// 2. Função de busca (Para o campo de procurar funcionar)
-window.filtrarContos = function() {
-    const termo = document.getElementById('searchBox').value.toLowerCase();
-    const filtrados = todosOsContos.filter(c => {
-        const titulo = (c.Titulo || "").toLowerCase();
-        const tema = (c.Tema || "").toLowerCase();
-        return titulo.includes(termo) || tema.includes(termo);
-    });
-    renderizar(filtrados);
-};
+    // 2. BUSCA EM TEMPO REAL
+    window.filtrarContos = function() {
+        const termo = document.getElementById('searchBox').value.toLowerCase();
+        const filtrados = todosOsContos.filter(c => {
+            const titulo = (c.Titulo || "").toLowerCase();
+            const tema = (c.Tema || "").toLowerCase();
+            return titulo.includes(termo) || tema.includes(termo);
+        });
+        renderizar(filtrados);
+    };
 
-// 2. Função de busca (Para o campo de procurar funcionar)
-window.filtrarContos = function() {
-    const termo = document.getElementById('searchBox').value.toLowerCase();
-    const filtrados = todosOsContos.filter(c => {
-        const titulo = (c.Titulo || "").toLowerCase();
-        const tema = (c.Tema || "").toLowerCase();
-        return titulo.includes(termo) || tema.includes(termo);
-    });
-    renderizar(filtrados);
-};
+    // 3. DESENHAR NA TELA
+    function renderizar(contos) {
+        const grid = document.getElementById('storiesGrid');
+        if (!grid) return;
+        grid.innerHTML = "";
 
-function renderizar(contos) {
-    const grid = document.getElementById('storiesGrid');
-    const grid = document.getElementById('storiesGrid');
-    if (!contos || contos.length === 0) {
-        grid.innerHTML = '<p style="color: #64748b; margin-top: 20px;">Nenhum conto encontrado...</p>';
-        return;
-    }
-    
-    grid.innerHTML = contos.map(c => `
-        <div class="card-conto">
-            <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="img-quadro">
-            <div class="conteudo">
-                <div>
-                    <span class="tema-tag">${c.Tema || 'GERAL'}</span>
-                    <h3 class="titulo-conto">${c.Titulo}</h3>
-                    <p class="resumo-conto">${c.Resumo}</p>
+        contos.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'story-card';
+            div.innerHTML = `
+                <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="story-img">
+                <div class="story-content">
+                    <span class="story-tag">${c.Tema || 'Geral'}</span>
+                    <h2 class="story-title">${c.Titulo}</h2>
+                    <p class="story-desc">${c.Resumo || ''}</p>
+                    <a href="${c.Url}" target="_blank" class="story-link">ABRIR PORTAL ↗</a>
                 </div>
-                <a href="${c.Url}" target="_blank" class="link-portal">ABRIR PORTAL ↗</a>
-            </div>
-        </div>
-    `).join('');
-}
-window.salvarConto = async function() {
-    // 1. Pede a senha
-    const senhaAcesso = prompt("Digite a chave de autor para publicar:");
-    
-    if (senhaAcesso !== "vall51") {
-        alert("Acesso negado. Apenas o Vall pode publicar histórias.");
-        return; 
+            `;
+            grid.appendChild(div);
+        });
     }
 
-    // 2. Coleta os dados (IDs corrigidas conforme seu modal)
-    const t = document.getElementById('campoTitulo').value;
-    const r = document.getElementById('campoResumo').value;
-    const tema = document.getElementById('campoTema').value;
-    const link = document.getElementById('campoLink').value;
-    const capa = document.getElementById('campoCapa').value;
+    // 4. SALVAR NOVO CONTO (COM SENHA E TRAVA)
+    window.salvarConto = async function() {
+        const senha = prompt("Digite a chave de autor:");
+        if (senha !== "vall51") {
+            alert("Senha incorreta!");
+            return;
+        }
 
-    // 3. Envia para o Supabase (usando a variável 'supa' que você definiu)
-    const { error } = await supa.from('Histórias').insert([
-        { Titulo: t, Resumo: r, Tema: tema, Url: link, url_capa: capa }
-    ]);
+        const t = document.getElementById('campoTitulo').value;
+        const r = document.getElementById('campoResumo').value;
+        const tema = document.getElementById('campoTema').value;
+        const link = document.getElementById('campoLink').value;
+        const capa = document.getElementById('campoCapa').value;
 
-    if (error) {
-        alert("Erro ao salvar: " + error.message);
-    } else {
-        alert("Conto publicado com sucesso!");
-        window.fecharModal();
-        carregarContos();
+        if (!t.trim()) {
+            alert("O título é obrigatório!");
+            return;
+        }
+
+        const { error } = await supa.from('Histórias').insert([
+            { Titulo: t, Resumo: r, Tema: tema, Url: link, url_capa: capa }
+        ]);
+
+        if (error) {
+            alert("Erro: " + error.message);
+        } else {
+            alert("Publicado!");
+            fecharModal();
+            carregarContos();
+        }
+    };
+
+    // 5. INICIALIZAÇÃO
+    carregarContos();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') === 'true') {
+        const btn = document.getElementById('btnAdmin');
+        if (btn) btn.style.display = 'block';
     }
-};
-
-// --- INICIALIZAÇÃO ---
-// Esta linha faz os contos aparecerem na tela
-carregarContos(); 
-
-// Lógica para mostrar o botão de admin apenas com ?admin=true
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('admin') === 'true') {
-    const btn = document.getElementById('btnAdmin');
-    if (btn) btn.style.display = 'block';
-}
 </script>
 </body>
 </html>
