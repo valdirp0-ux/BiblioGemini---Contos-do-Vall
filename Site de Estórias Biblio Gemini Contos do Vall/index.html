@@ -109,19 +109,33 @@ function renderizar(contos) {
         </div>
     `).join('');
 }
-
 window.salvarConto = async function() {
-    const t = document.getElementById('campoTitulo').value;
-    const tema = document.getElementById('campoTema').value;
-    const r = document.getElementById('campoResumo').value;
-    const l = document.getElementById('campoLink').value;
-    const c = document.getElementById('campoCapa').value;
+    // 1. Pede a senha ao usuário
+    const senhaAcesso = prompt("Digite a chave de autor para publicar:");
+    
+    // 2. Verifica a senha (SUBSTITUA 'SUA_SENHA_AQUI' pela senha que desejar)
+    if (senhaAcesso !== "SUA_SENHA_AQUI") {
+        alert("Acesso negado. Apenas o Vall pode publicar histórias.");
+        return; 
+    }
 
-    if(!t || !tema || !r) return alert("Preencha Título, Tema e Resumo!");
+    // 3. Se a senha estiver correta, ele coleta os dados e salva
+    const t = document.getElementById('novoTitulo').value;
+    const r = document.getElementById('novoResumo').value;
+    const tema = document.getElementById('novoTema').value;
+    const link = document.getElementById('novoLink').value;
 
-    const { error } = await supa.from('Histórias').insert([
-        { Titulo: t, Tema: tema, Resumo: r, Url: l, url_capa: c }
+    const { error } = await supaClient.from('Histórias').insert([
+        { Titulo: t, Resumo: r, Tema: tema, Url: link }
     ]);
+
+    if (error) {
+        alert("Erro: " + error.message);
+    } else {
+        fecharModal();
+        carregar();
+    }
+}
 
     if (error) {
         alert("Erro ao salvar: " + error.message);
