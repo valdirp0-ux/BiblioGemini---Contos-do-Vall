@@ -6,23 +6,131 @@
     <title>CONTOS DO VALL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
-        .titulo-vall { font-size: 2.8rem; font-weight: 900; color: #1e293b; text-transform: uppercase; margin-bottom: 5px; }
-        .subtitulo { color: #64748b; font-style: italic; margin-bottom: 30px; }
-        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; margin-bottom: 20px; }
-        #storiesGrid { display: grid; grid-template-cols: 1fr 1fr; gap: 20px; width: 100%; max-width: 1000px; margin-top: 40px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
-        .story-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; padding: 15px; gap: 15px; height: 180px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .story-card:hover { transform: translateY(-5px); }
-        .story-img { width: 110px; min-width: 110px; height: 100%; border-radius: 12px; object-fit: cover; background: #f1f5f9; }
-        .story-content { display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; width: 100%; }
-        .story-tag { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; }
-        .story-title { font-weight: 800; font-size: 1.1rem; color: #1e293b; }
-        .story-desc { font-size: 0.8rem; color: #64748b; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .story-link { font-size: 10px; font-weight: 900; color: #4f46e5; text-transform: uppercase; text-decoration: none; align-self: flex-end; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            padding: 40px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh;
+        }
         
-        @media (max-width: 768px) { #storiesGrid { grid-template-cols: 1fr; } }
-        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1000; }
+        .titulo-vall { 
+            font-size: 2.8rem; 
+            font-weight: 900; 
+            color: #1e293b; 
+            text-transform: uppercase; 
+            margin-bottom: 5px; 
+            text-align: center;
+        }
+        
+        .subtitulo { 
+            color: #64748b; 
+            font-style: italic; 
+            margin-bottom: 30px; 
+            text-align: center;
+        }
+
+        .btn-novo { 
+            background: #4f46e5; 
+            color: white; 
+            padding: 12px 25px; 
+            border-radius: 12px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            border: none; 
+            margin-bottom: 20px; 
+            transition: all 0.2s;
+        }
+        .btn-novo:hover { background: #4338ca; transform: scale(1.05); }
+
+        #storiesGrid { 
+            display: grid; 
+            grid-template-cols: repeat(auto-fill, minmax(450px, 1fr)); 
+            gap: 20px; 
+            width: 100%; 
+            max-width: 1100px; 
+            margin-top: 40px; 
+        }
+
+        .story-card { 
+            background: white; 
+            border-radius: 20px; 
+            border: 1px solid #e2e8f0; 
+            display: flex; 
+            padding: 15px; 
+            gap: 15px; 
+            height: 190px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            transition: transform 0.2s; 
+        }
+        .story-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+
+        .story-img { 
+            width: 120px; 
+            min-width: 120px; 
+            height: 100%; 
+            border-radius: 12px; 
+            object-fit: cover; 
+            background: #f1f5f9; 
+        }
+
+        .story-content { 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            overflow: hidden; 
+            width: 100%; 
+        }
+
+        .story-tag { 
+            font-size: 10px; 
+            font-weight: 900; 
+            color: #7c3aed; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+
+        .story-title { font-weight: 800; font-size: 1.2rem; color: #1e293b; line-height: 1.2; margin-top: 4px; }
+        .story-desc { 
+            font-size: 0.85rem; 
+            color: #64748b; 
+            margin-top: 6px;
+            display: -webkit-box; 
+            -webkit-line-clamp: 3; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+        }
+
+        .story-link { 
+            font-size: 11px; 
+            font-weight: 900; 
+            color: #4f46e5; 
+            text-decoration: none; 
+            align-self: flex-end; 
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .story-link:hover { border-color: #4f46e5; }
+
+        #modal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(15, 23, 42, 0.7); 
+            backdrop-filter: blur(8px); 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000; 
+        }
+
+        @media (max-width: 768px) { 
+            #storiesGrid { grid-template-cols: 1fr; } 
+            .titulo-vall { font-size: 2.2rem; }
+        }
     </style>
 </head>
 <body>
@@ -32,64 +140,104 @@
     
     <button id="btnAdmin" class="btn-novo" onclick="abrirModal()" style="display: none;">+ Novo Conto</button>
     
-    <div style="width: 100%; max-width: 400px;">
+    <div style="width: 100%; max-width: 450px;">
         <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
-        style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        style="width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); outline: none; transition: 0.2s;">
     </div>
 
     <div id="storiesGrid"></div>
 
     <div id="modal" onclick="if(event.target == this) fecharModal()">
-        <div style="background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 400px;">
-            <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px;">Nova Jornada</h2>
-            <input type="text" id="campoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <input type="text" id="campoTema" placeholder="Tema (Ex: Metafísica, Ficção)" style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <input type="text" id="campoCapa" placeholder="Link da Imagem (URL)" style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <textarea id="campoResumo" placeholder="Resumo..." style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0; height: 60px;"></textarea>
-            <input type="text" id="campoLink" placeholder="Link do Portal Gemini" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
+        <div style="background: white; padding: 35px; border-radius: 28px; width: 95%; max-width: 420px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
+            <h2 style="font-weight: 900; font-size: 1.6rem; margin-bottom: 20px; color: #1e293b;">Nova Jornada</h2>
             
-            <div style="display: flex; gap: 10px;">
-                <button onclick="window.salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold;">Salvar</button>
-                <button onclick="fecharModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 14px; border-radius: 12px; font-weight: bold;">Sair</button>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="campoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <input type="text" id="campoTema" placeholder="Tema (Ex: Metafísica, Ficção)" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <input type="text" id="campoCapa" placeholder="Link da Imagem (URL)" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <textarea id="campoResumo" placeholder="Breve resumo da estória..." style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; height: 80px; resize: none;"></textarea>
+                <input type="text" id="campoLink" placeholder="Link do Portal Gemini (URL)" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 10px;">
+                <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 15px; border-radius: 14px; font-weight: bold; border: none; cursor: pointer;">Publicar Agora</button>
+                <button onclick="fecharModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 15px; border-radius: 14px; font-weight: bold; border: none; cursor: pointer;">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // CONFIGURAÇÃO SUPABASE
         const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
         const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_026WVlT7';
-        const supa = supabase.createClient(URL_S, KEY_S);
-
+        
+        let supa;
         let todosOsContos = [];
+
+        // 1. INICIALIZAÇÃO SEGURA
+        async function iniciar() {
+            if (typeof supabase === 'undefined') {
+                setTimeout(iniciar, 100);
+                return;
+            }
+            supa = supabase.createClient(URL_S, KEY_S);
+            await carregarContos();
+            verificarAcessoAdmin();
+        }
 
         window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
         window.fecharModal = () => document.getElementById('modal').style.display = 'none';
 
-        // 1. CARREGAR CONTOS
+        // 2. CARREGAR DADOS
         async function carregarContos() {
             try {
                 const { data, error } = await supa.from('Histórias').select('*');
                 if (error) throw error;
 
                 if (data) {
-                    // Ordena se existir a coluna 'id', senão usa como veio
-                    todosOsContos = data[0]?.id ? data.sort((a, b) => b.id - a.id) : data;
+                    // Ordena pelos IDs maiores primeiro (mais recentes)
+                    todosOsContos = data.sort((a, b) => (b.id || 0) - (a.id || 0));
                     renderizar(todosOsContos);
-                    limparDadosVazios();
+                    
+                    // Limpeza silenciosa de lixo
+                    supa.from('Histórias').delete().is('Titulo', null).then();
+                    supa.from('Histórias').delete().eq('Titulo', '').then();
                 }
             } catch (err) {
-                console.error("Erro ao carregar:", err.message);
+                console.error("Erro na conexão:", err.message);
+                document.getElementById('storiesGrid').innerHTML = "<p style='text-align:center; color:#ef4444;'>Houve uma falha na conexão com o banco de dados.</p>";
             }
         }
 
-        async function limparDadosVazios() {
-            await supa.from('Histórias').delete().is('Titulo', null);
-            await supa.from('Histórias').delete().eq('Titulo', '');
+        // 3. RENDERIZAR CARDS
+        function renderizar(lista) {
+            const grid = document.getElementById('storiesGrid');
+            grid.innerHTML = "";
+
+            if (lista.length === 0) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #64748b;'>Nenhum conto encontrado no portal.</p>";
+                return;
+            }
+
+            lista.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'story-card';
+                div.innerHTML = `
+                    <img src="${c.url_capa || 'https://via.placeholder.com/150?text=Sem+Capa'}" class="story-img" onerror="this.src='https://via.placeholder.com/150?text=Sem+Capa'">
+                    <div class="story-content">
+                        <div>
+                            <span class="story-tag">${c.Tema || 'Estudo'}</span>
+                            <h2 class="story-title">${c.Titulo || 'Conto Sem Nome'}</h2>
+                            <p class="story-desc">${c.Resumo || 'Sem descrição disponível.'}</p>
+                        </div>
+                        <a href="${c.Url || '#'}" target="_blank" class="story-link">ENTRAR NO PORTAL ↗</a>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
         }
 
-        // 2. BUSCA
+        // 4. FILTRO DE BUSCA
         window.filtrarContos = function() {
             const termo = document.getElementById('inputBusca').value.toLowerCase();
             const filtrados = todosOsContos.filter(c => 
@@ -99,75 +247,41 @@
             renderizar(filtrados);
         };
 
-        // 3. RENDERIZAR
-        function renderizar(contos) {
-            const grid = document.getElementById('storiesGrid');
-            if (!grid) return;
-            grid.innerHTML = "";
-
-            if (contos.length === 0) {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #64748b;'>Nenhum conto encontrado.</p>";
-                return;
-            }
-
-            contos.forEach(c => {
-                const div = document.createElement('div');
-                div.className = 'story-card';
-                div.innerHTML = `
-                    <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="story-img" onerror="this.src='https://via.placeholder.com/150'">
-                    <div class="story-content">
-                        <div>
-                            <span class="story-tag">${c.Tema || 'Geral'}</span>
-                            <h2 class="story-title">${c.Titulo}</h2>
-                            <p class="story-desc">${c.Resumo || ''}</p>
-                        </div>
-                        <a href="${c.Url}" target="_blank" class="story-link">ABRIR PORTAL ↗</a>
-                    </div>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        // 4. SALVAR
+        // 5. SALVAR NOVO
         window.salvarConto = async function() {
-            const senha = prompt("Digite a chave de autor:");
-            if (senha !== "vall51") {
-                alert("Senha incorreta!");
-                return;
-            }
+            const senha = prompt("Identifique-se como Autor:");
+            if (senha !== "vall51") return alert("Chave incorreta.");
 
-            const t = document.getElementById('campoTitulo').value;
-            if (!t.trim()) {
-                alert("O título é obrigatório!");
-                return;
-            }
+            const titulo = document.getElementById('campoTitulo').value;
+            if (!titulo.trim()) return alert("Dê um título à sua jornada!");
 
-            const novoConto = {
-                Titulo: t,
+            const novoObj = {
+                Titulo: titulo,
                 Resumo: document.getElementById('campoResumo').value,
                 Tema: document.getElementById('campoTema').value,
                 Url: document.getElementById('campoLink').value,
                 url_capa: document.getElementById('campoCapa').value
             };
 
-            const { error } = await supa.from('Histórias').insert([novoConto]);
+            const { error } = await supa.from('Histórias').insert([novoObj]);
 
             if (error) {
-                alert("Erro: " + error.message);
+                alert("Erro ao gravar: " + error.message);
             } else {
-                alert("Publicado!");
-                fecharModal();
+                alert("Jornada eternizada com sucesso!");
                 location.reload();
             }
         };
 
-        // 5. INICIALIZAÇÃO
-        window.onload = carregarContos;
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('admin') === 'true') {
-            document.getElementById('btnAdmin').style.display = 'block';
+        function verificarAcessoAdmin() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('admin') === 'true') {
+                document.getElementById('btnAdmin').style.display = 'block';
+            }
         }
+
+        // DISPARAR O PORTAL
+        iniciar();
     </script>
 </body>
 </html>
