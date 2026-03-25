@@ -48,7 +48,7 @@
             <input type="text" id="campoLink" placeholder="Link do Portal Gemini" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
             
             <div style="display: flex; gap: 10px;">
-                <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold;">Salvar</button>
+               <button onclick="window.salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold;">Salvar</button>
                 <button onclick="fecharModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 14px; border-radius: 12px; font-weight: bold;">Sair</button>
             </div>
         </div>
@@ -155,16 +155,15 @@ function limpar() {
     document.getElementById('campoCapa').value = '';
 }
 
-document.addEventListener('DOMContentLoaded', carregarContos);
+// Garante que os contos carreguem ao abrir o site
+        carregarContos(); 
 
-    document.addEventListener('DOMContentLoaded', carregarContos);
-// PASSO 2: Lógica para mostrar o botão apenas para o Vall
+        // PASSO 2: Lógica do Modo Admin
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('admin') === 'true') {
             const btn = document.getElementById('btnAdmin');
             if (btn) btn.style.display = 'block';
         }
-
     </script>
 </body>
 </html>
