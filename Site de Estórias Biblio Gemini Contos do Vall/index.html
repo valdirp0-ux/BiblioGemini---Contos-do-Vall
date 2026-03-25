@@ -1,113 +1,162 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>CONTOS DO VALL</title>
-
-    <meta property="og:title" content="CONTOS DO VALL">
-
-    <meta property="og:description" content="Onde os sonhos se transformam em estórias.">
-
-    <meta property="og:image" content="https://images.unsplash.com/photo-1464802686167-b939a67e06a1?q=80&w=1000">
-
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
-
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
-
         .titulo-vall { font-size: 2.8rem; font-weight: 900; color: #1e293b; text-transform: uppercase; margin-bottom: 5px; }
-
         .subtitulo { color: #64748b; font-style: italic; margin-bottom: 30px; }
-
-        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; }
-
+        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; }
         #storiesGrid { display: grid; grid-template-cols: 1fr 1fr; gap: 20px; width: 100%; max-width: 1000px; margin-top: 40px; }
-
-        .card-conto { background: white; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; padding: 15px; gap: 15px; height: 180px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-
-        .img-quadro { width: 110px; min-width: 110px; height: 100%; border-radius: 12px; object-fit: cover; background: #f1f5f9; }
-
-        .conteudo { display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; width: 100%; }
-
-        .tema-tag { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; }
-
-        .titulo-conto { font-weight: 800; font-size: 1.1rem; color: #1e293b; }
-
-        .resumo-conto { font-size: 0.8rem; color: #64748b; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-
-        .link-portal { font-size: 10px; font-weight: 900; color: #4f46e5; text-transform: uppercase; text-decoration: none; align-self: flex-end; }
-
+        
+        /* Estilo do Card Corrigido */
+        .story-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; padding: 15px; gap: 15px; height: 180px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .story-img { width: 110px; min-width: 110px; height: 100%; border-radius: 12px; object-fit: cover; background: #f1f5f9; }
+        .story-content { display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; width: 100%; }
+        .story-tag { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; }
+        .story-title { font-weight: 800; font-size: 1.1rem; color: #1e293b; }
+        .story-desc { font-size: 0.8rem; color: #64748b; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .story-link { font-size: 10px; font-weight: 900; color: #4f46e5; text-transform: uppercase; text-decoration: none; align-self: flex-end; }
+        
         @media (max-width: 768px) { #storiesGrid { grid-template-cols: 1fr; } }
-
         #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1000; }
-
     </style>
-
 </head>
-
 <body>
 
-
-
     <h1 class="titulo-vall">CONTOS DO VALL</h1>
-
     <p class="subtitulo">"Onde os sonhos se transformam em estórias."</p>
-
+    
     <button id="btnAdmin" class="btn-novo" onclick="abrirModal()" style="display: none;">+ Novo Conto</button>
-
+    
     <div style="width: 100%; max-width: 400px; margin-top: 20px;">
-
-    <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
-
-    style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-
-</div>
-
-
+        <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
+        style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    </div>
 
     <div id="storiesGrid"></div>
 
-
-
     <div id="modal" onclick="if(event.target == this) fecharModal()">
-
         <div style="background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 400px;">
-
             <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px;">Nova Jornada</h2>
-
-            
-
             <input type="text" id="campoTitulo" placeholder="Título do Conto" style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0;">
-
             <input type="text" id="campoTema" placeholder="Tema (Ex: Metafísica, Ficção)" style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0;">
-
             <input type="text" id="campoCapa" placeholder="Link da Imagem (URL)" style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0;">
-
             <textarea id="campoResumo" placeholder="Resumo..." style="width: 100%; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #e2e8f0; height: 60px;"></textarea>
-
             <input type="text" id="campoLink" placeholder="Link do Portal Gemini" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
-
             
-
             <div style="display: flex; gap: 10px;">
-
-               <button onclick="window.salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold;">Salvar</button>
-
+                <button onclick="window.salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 14px; border-radius: 12px; font-weight: bold;">Salvar</button>
                 <button onclick="fecharModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 14px; border-radius: 12px; font-weight: bold;">Sair</button>
-
             </div>
-
         </div>
-
     </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // CONFIGURAÇÃO SUPABASE
+        const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
+        const KEY_S = 'SUA_KEY_AQUI'; // <--- COLOQUE SUA KEY AQUI
+        const supa = supabase.createClient(URL_S, KEY_S);
 
-<script>
+        let todosOsContos = [];
+
+        // FUNÇÕES DO MODAL
+        window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
+        window.fecharModal = () => document.getElementById('modal').style.display = 'none';
+
+        // 1. CARREGAR CONTOS
+        async function carregarContos() {
+            // Faxina antes de carregar
+            await supa.from('Histórias').delete().is('Titulo', null);
+            await supa.from('Histórias').delete().eq('Titulo', '');
+
+            const { data, error } = await supa.from('Histórias').select('*');
+            if (error) {
+                console.error("Erro Supabase:", error.message);
+            } else {
+                todosOsContos = data.reverse(); 
+                renderizar(todosOsContos);
+            }
+        }
+
+        // 2. BUSCA (ID corrigido para inputBusca)
+        window.filtrarContos = function() {
+            const termo = document.getElementById('inputBusca').value.toLowerCase();
+            const filtrados = todosOsContos.filter(c => {
+                const titulo = (c.Titulo || "").toLowerCase();
+                const tema = (c.Tema || "").toLowerCase();
+                return titulo.includes(termo) || tema.includes(termo);
+            });
+            renderizar(filtrados);
+        };
+
+        // 3. RENDERIZAR (Classes corrigidas para bater com o CSS)
+        function renderizar(contos) {
+            const grid = document.getElementById('storiesGrid');
+            if (!grid) return;
+            grid.innerHTML = "";
+
+            contos.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'story-card';
+                div.innerHTML = `
+                    <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="story-img">
+                    <div class="story-content">
+                        <span class="story-tag">${c.Tema || 'Geral'}</span>
+                        <h2 class="story-title">${c.Titulo}</h2>
+                        <p class="story-desc">${c.Resumo || ''}</p>
+                        <a href="${c.Url}" target="_blank" class="story-link">ABRIR PORTAL ↗</a>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        // 4. SALVAR
+        window.salvarConto = async function() {
+            const senha = prompt("Digite a chave de autor:");
+            if (senha !== "vall51") {
+                alert("Senha incorreta!");
+                return;
+            }
+
+            const t = document.getElementById('campoTitulo').value;
+            if (!t.trim()) {
+                alert("O título é obrigatório!");
+                return;
+            }
+
+            const novoConto = {
+                Titulo: t,
+                Resumo: document.getElementById('campoResumo').value,
+                Tema: document.getElementById('campoTema').value,
+                Url: document.getElementById('campoLink').value,
+                url_capa: document.getElementById('campoCapa').value
+            };
+
+            const { error } = await supa.from('Histórias').insert([novoConto]);
+
+            if (error) {
+                alert("Erro: " + error.message);
+            } else {
+                alert("Publicado!");
+                fecharModal();
+                carregarContos();
+            }
+        };
+
+        // 5. INICIALIZAÇÃO
+        carregarContos();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('admin') === 'true') {
+            const btn = document.getElementById('btnAdmin');
+            if (btn) btn.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
