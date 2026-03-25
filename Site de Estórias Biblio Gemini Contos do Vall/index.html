@@ -9,11 +9,11 @@
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
         .titulo-vall { font-size: 2.8rem; font-weight: 900; color: #1e293b; text-transform: uppercase; margin-bottom: 5px; }
         .subtitulo { color: #64748b; font-style: italic; margin-bottom: 30px; }
-        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; }
+        .btn-novo { background: #4f46e5; color: white; padding: 12px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; margin-bottom: 20px; }
         #storiesGrid { display: grid; grid-template-cols: 1fr 1fr; gap: 20px; width: 100%; max-width: 1000px; margin-top: 40px; }
         
-        /* Estilo do Card Corrigido */
-        .story-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; padding: 15px; gap: 15px; height: 180px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .story-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; padding: 15px; gap: 15px; height: 180px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .story-card:hover { transform: translateY(-5px); }
         .story-img { width: 110px; min-width: 110px; height: 100%; border-radius: 12px; object-fit: cover; background: #f1f5f9; }
         .story-content { display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; width: 100%; }
         .story-tag { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; }
@@ -32,7 +32,7 @@
     
     <button id="btnAdmin" class="btn-novo" onclick="abrirModal()" style="display: none;">+ Novo Conto</button>
     
-    <div style="width: 100%; max-width: 400px; margin-top: 20px;">
+    <div style="width: 100%; max-width: 400px;">
         <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
         style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
     </div>
@@ -59,56 +59,62 @@
     <script>
         // CONFIGURAÇÃO SUPABASE
         const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-        const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7';
+        const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_026WVlT7'; // CHAVE JÁ APLICADA
         const supa = supabase.createClient(URL_S, KEY_S);
 
         let todosOsContos = [];
 
-        // FUNÇÕES DO MODAL
         window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
         window.fecharModal = () => document.getElementById('modal').style.display = 'none';
 
-        // 1. CARREGAR CONTOS
+        // 1. CARREGAR CONTOS (Correção: Deletar DEPOIS de carregar)
         async function carregarContos() {
-            // Faxina antes de carregar
-            await supa.from('Histórias').delete().is('Titulo', null);
-            await supa.from('Histórias').delete().eq('Titulo', '');
-
             const { data, error } = await supa.from('Histórias').select('*');
+            
             if (error) {
                 console.error("Erro Supabase:", error.message);
             } else {
-                todosOsContos = data.reverse(); 
+                // Inverte para os novos aparecerem primeiro
+                todosOsContos = data.sort((a, b) => b.id - a.id); 
                 renderizar(todosOsContos);
+                
+                // Limpeza em segundo plano (não trava o site)
+                supa.from('Histórias').delete().is('Titulo', null).then();
+                supa.from('Histórias').delete().eq('Titulo', '').then();
             }
         }
 
-        // 2. BUSCA (ID corrigido para inputBusca)
+        // 2. BUSCA
         window.filtrarContos = function() {
             const termo = document.getElementById('inputBusca').value.toLowerCase();
             const filtrados = todosOsContos.filter(c => {
-                const titulo = (c.Titulo || "").toLowerCase();
-                const tema = (c.Tema || "").toLowerCase();
-                return titulo.includes(termo) || tema.includes(termo);
+                return (c.Titulo || "").toLowerCase().includes(termo) || 
+                       (c.Tema || "").toLowerCase().includes(termo);
             });
             renderizar(filtrados);
         };
 
-        // 3. RENDERIZAR (Classes corrigidas para bater com o CSS)
+        // 3. RENDERIZAR
         function renderizar(contos) {
             const grid = document.getElementById('storiesGrid');
             if (!grid) return;
             grid.innerHTML = "";
 
+            if (contos.length === 0) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #64748b;'>Nenhum conto encontrado.</p>";
+            }
+
             contos.forEach(c => {
                 const div = document.createElement('div');
                 div.className = 'story-card';
                 div.innerHTML = `
-                    <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="story-img">
+                    <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="story-img" onerror="this.src='https://via.placeholder.com/150'">
                     <div class="story-content">
-                        <span class="story-tag">${c.Tema || 'Geral'}</span>
-                        <h2 class="story-title">${c.Titulo}</h2>
-                        <p class="story-desc">${c.Resumo || ''}</p>
+                        <div>
+                            <span class="story-tag">${c.Tema || 'Geral'}</span>
+                            <h2 class="story-title">${c.Titulo}</h2>
+                            <p class="story-desc">${c.Resumo || ''}</p>
+                        </div>
                         <a href="${c.Url}" target="_blank" class="story-link">ABRIR PORTAL ↗</a>
                     </div>
                 `;
@@ -145,17 +151,16 @@
             } else {
                 alert("Publicado!");
                 fecharModal();
-                carregarContos();
+                location.reload(); // Recarrega para garantir a ordem
             }
         };
 
-        // 5. INICIALIZAÇÃO
-        carregarContos();
+        // 5. INICIALIZAÇÃO SEGURA
+        window.onload = carregarContos;
 
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('admin') === 'true') {
-            const btn = document.getElementById('btnAdmin');
-            if (btn) btn.style.display = 'block';
+            document.getElementById('btnAdmin').style.display = 'block';
         }
     </script>
 </body>
