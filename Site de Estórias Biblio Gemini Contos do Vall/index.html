@@ -166,15 +166,15 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Usei as chaves que aparecem no seu print
         const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
         const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_026WVlT7';
         
         let supa;
         let todosOsContos = [];
 
-        // 1. INICIALIZAÇÃO SEGURA
         async function iniciar() {
             if (typeof supabase === 'undefined') {
                 setTimeout(iniciar, 100);
@@ -188,47 +188,47 @@
         window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
         window.fecharModal = () => document.getElementById('modal').style.display = 'none';
 
-        // 2. CARREGAR DADOS
         async function carregarContos() {
             try {
+                // Buscamos na tabela 'Histórias' (com acento, como está no seu print)
                 const { data, error } = await supa.from('Histórias').select('*');
+                
                 if (error) throw error;
 
                 if (data) {
-                    // Ordena pelos IDs maiores primeiro (mais recentes)
-                    todosOsContos = data.sort((a, b) => (b.id || 0) - (a.id || 0));
-                    renderizar(todosOsContos);
+                    // Removemos linhas que por acaso estejam totalmente vazias no banco
+                    const dadosLimpos = data.filter(item => item.Titulo);
                     
-                    // Limpeza silenciosa de lixo
-                    supa.from('Histórias').delete().is('Titulo', null).then();
-                    supa.from('Histórias').delete().eq('Titulo', '').then();
+                    // Ordena pelos mais novos (se não tiver ID, ele não quebra)
+                    todosOsContos = dadosLimpos.sort((a, b) => (b.id || 0) - (a.id || 0));
+                    
+                    renderizar(todosOsContos);
                 }
             } catch (err) {
-                console.error("Erro na conexão:", err.message);
-                document.getElementById('storiesGrid').innerHTML = "<p style='text-align:center; color:#ef4444;'>Houve uma falha na conexão com o banco de dados.</p>";
+                console.error("Erro Supabase:", err.message);
+                document.getElementById('storiesGrid').innerHTML = "<p class='text-red-500'>Erro ao carregar dados do portal.</p>";
             }
         }
 
-        // 3. RENDERIZAR CARDS
         function renderizar(lista) {
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = "";
 
-            if (lista.length === 0) {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #64748b;'>Nenhum conto encontrado no portal.</p>";
-                return;
-            }
-
             lista.forEach(c => {
                 const div = document.createElement('div');
                 div.className = 'story-card';
+                
+                // AJUSTE: Se a coluna for 'url_capa' ou 'Capa', ele tenta ler. 
+                // Se não achar nada, usa o placeholder cinza.
+                const foto = c.url_capa || c.Capa || 'https://via.placeholder.com/150?text=Sem+Capa';
+
                 div.innerHTML = `
-                    <img src="${c.url_capa || 'https://via.placeholder.com/150?text=Sem+Capa'}" class="story-img" onerror="this.src='https://via.placeholder.com/150?text=Sem+Capa'">
+                    <img src="${foto}" class="story-img" onerror="this.src='https://via.placeholder.com/150?text=Erro+Imagem'">
                     <div class="story-content">
                         <div>
-                            <span class="story-tag">${c.Tema || 'Estudo'}</span>
-                            <h2 class="story-title">${c.Titulo || 'Conto Sem Nome'}</h2>
-                            <p class="story-desc">${c.Resumo || 'Sem descrição disponível.'}</p>
+                            <span class="story-tag">${c.Tema || 'Geral'}</span>
+                            <h2 class="story-title">${c.Titulo || 'Sem Título'}</h2>
+                            <p class="story-desc">${c.Resumo || ''}</p>
                         </div>
                         <a href="${c.Url || '#'}" target="_blank" class="story-link">ENTRAR NO PORTAL ↗</a>
                     </div>
@@ -237,7 +237,6 @@
             });
         }
 
-        // 4. FILTRO DE BUSCA
         window.filtrarContos = function() {
             const termo = document.getElementById('inputBusca').value.toLowerCase();
             const filtrados = todosOsContos.filter(c => 
@@ -247,28 +246,28 @@
             renderizar(filtrados);
         };
 
-        // 5. SALVAR NOVO
         window.salvarConto = async function() {
-            const senha = prompt("Identifique-se como Autor:");
-            if (senha !== "vall51") return alert("Chave incorreta.");
+            const senha = prompt("Chave do Autor:");
+            if (senha !== "vall51") return alert("Acesso negado.");
 
             const titulo = document.getElementById('campoTitulo').value;
-            if (!titulo.trim()) return alert("Dê um título à sua jornada!");
+            if (!titulo.trim()) return alert("O título é obrigatório!");
 
+            // ATENÇÃO: Verifique se no seu Supabase a coluna de imagem chama 'url_capa'
             const novoObj = {
                 Titulo: titulo,
                 Resumo: document.getElementById('campoResumo').value,
                 Tema: document.getElementById('campoTema').value,
                 Url: document.getElementById('campoLink').value,
-                url_capa: document.getElementById('campoCapa').value
+                url_capa: document.getElementById('campoCapa').value 
             };
 
             const { error } = await supa.from('Histórias').insert([novoObj]);
 
             if (error) {
-                alert("Erro ao gravar: " + error.message);
+                alert("Erro ao salvar: " + error.message);
             } else {
-                alert("Jornada eternizada com sucesso!");
+                alert("História enviada ao banco!");
                 location.reload();
             }
         };
@@ -280,7 +279,6 @@
             }
         }
 
-        // DISPARAR O PORTAL
         iniciar();
     </script>
 </body>
