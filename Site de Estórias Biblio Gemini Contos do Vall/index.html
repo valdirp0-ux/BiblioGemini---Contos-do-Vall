@@ -72,8 +72,7 @@ async function carregarContos() {
     } else {
         todosOsContos = data; // Guarda a lista vinda do banco
         renderizar(data);     // Mostra tudo na tela
-    }
-}
+       
 
 // 2. Função que faz a busca funcionar em tempo real
 window.filtrarContos = function() {
@@ -83,12 +82,14 @@ window.filtrarContos = function() {
         const titulo = (c.Titulo || "").toLowerCase();
         const tema = (c.Tema || "").toLowerCase();
         return titulo.includes(termo) || tema.includes(termo);
+  return titulo.includes(termo) || tema.includes(termo);
     });
 
-    renderizar(filtrados);
-}
+    renderizar(filtrados); // O correto é filtrar os contos da busca
+}; // Aqui fecha a função filtrarContos
 
 function renderizar(contos) {
+    const grid = document.getElementById('storiesGrid');
     const grid = document.getElementById('storiesGrid');
     if (!contos || contos.length === 0) {
         grid.innerHTML = '<p style="color: #64748b; margin-top: 20px;">Nenhum conto encontrado...</p>';
