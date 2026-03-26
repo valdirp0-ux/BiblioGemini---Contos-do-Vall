@@ -103,19 +103,22 @@
         }
         .story-link:hover { border-color: #4f46e5; }
 
+        /* Botão estilizado */
         .btn-novo {
             background: #1e293b;
             color: white;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 12px;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 13px;
             letter-spacing: 1px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s;
+            border: none;
+            display: none; /* Começa escondido */
         }
-        .btn-novo:hover { background: #4f46e5; }
+        .btn-novo:hover { background: #4f46e5; transform: scale(1.05); }
 
         #modal { 
             display: none; 
@@ -156,20 +159,137 @@
         <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 20px; color: #1e293b;">O Portal Contos do Vall</h2>
         <p class="mb-4">
             Este espaço nasceu da união entre a <strong>psicanálise, a metafísica e a prática de mindfulness</strong>. 
-            Os contos oníricos aqui publicados, são frutos de um processo de escrutínio de sonhos e vivências oníricas, 
-            transformadas em narrativas para auxiliar no autoconhecimento.
+            Os contos oníricos aqui publicados, são frutos de um processo de escrutínio de sonhos e vivências oníricas.
         </p>
         <p class="mb-6">
-            Sou terapeuta especializado em meditação mindfulness e terapias energéticas. Utilizo estas histórias 
-            como uma ponte entre o inconsciente e a realidade consciente, buscando a transmutação interior 
-            através do despertar simbólico contido nos sonhos.
+            Sou terapeuta especializado em meditação mindfulness e terapias energéticas. Utilizo estas histórias como ponte buscando a transmutação interior.
         </p>
 
-        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
-            <a href="https://instagram.com/valdirp47" target="_blank" 
-               style="color: #1e293b; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; text-decoration: none;">
-               📸 INSTAGRAM: @valdirp47
-            </a>
-            <a href="mailto:valdirp0@gmail.com" 
-               style="color: #1e293b; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; text-decoration: none;">
-               ✉️ E-MAIL: valdir
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <span style="color: #1e293b; font-weight: 800; font-size: 0.85rem;">📸 INSTAGRAM: @valdirp47</span>
+            <span style="color: #1e293b; font-weight: 800; font-size: 0.85rem;">✉️ E-MAIL: valdirp0@gmail.com</span>
+        </div> 
+    </div>
+
+    <div id="storiesGrid"></div>
+
+    <div id="modal" onclick="if(event.target == this) fecharModal()">
+        <div style="background: white; padding: 30px; border-radius: 28px; width: 95%; max-width: 420px;">
+            <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px; color: #1e293b;">Publicar no Portal</h2>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="campoTitulo" placeholder="Título" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <input type="text" id="campoTema" placeholder="Tema" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <input type="text" id="campoCapa" placeholder="Link da Capa (Postimages)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <textarea id="campoResumo" placeholder="Resumo..." style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; height: 80px; resize: none;"></textarea>
+                <input type="text" id="campoLink" placeholder="Link do Conto (Gemini Share)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <button onclick="salvarConto()" style="width: 100%; background: #4f46e5; color: white; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Salvar</button>
+                <button onclick="fecharModal()" style="width: 100%; background: #f1f5f9; color: #64748b; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
+        const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7'; 
+        
+        let supa;
+        let todosOsContos = [];
+
+        async function iniciar() {
+            if (typeof supabase === 'undefined') {
+                setTimeout(iniciar, 100);
+                return;
+            }
+            supa = supabase.createClient(URL_S, KEY_S);
+            
+            // LÓGICA CORRIGIDA: Só mostra se admin=true estiver na URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('admin') === 'true') {
+                document.getElementById('btnNovoConto').style.display = 'block';
+            }
+
+            await carregarContos();
+        }
+
+        function mostrarSobre() {
+            document.getElementById('storiesGrid').style.display = 'none';
+            document.getElementById('containerBusca').style.display = 'none';
+            document.getElementById('btnNovoConto').style.display = 'none';
+            document.getElementById('secaoSobre').style.display = 'block';
+        }
+
+        function mostrarHome() {
+            document.getElementById('storiesGrid').style.display = 'grid';
+            document.getElementById('containerBusca').style.display = 'block';
+            document.getElementById('secaoSobre').style.display = 'none';
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('admin') === 'true') {
+                document.getElementById('btnNovoConto').style.display = 'block';
+            }
+        }
+
+        window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
+        window.fecharModal = () => document.getElementById('modal').style.display = 'none';
+
+        async function carregarContos() {
+            const { data, error } = await supa.from('Histórias').select('*');
+            if (!error && data) {
+                todosOsContos = data.filter(c => c.Titulo && c.Titulo !== "EMPTY");
+                renderizar(todosOsContos);
+            }
+        }
+
+        function renderizar(lista) {
+            const grid = document.getElementById('storiesGrid');
+            grid.innerHTML = "";
+            lista.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'story-card';
+                div.innerHTML = `
+                    <img src="${c.url_capa || 'https://via.placeholder.com/150'}" class="story-img">
+                    <div class="story-content">
+                        <div>
+                            <span class="story-tag">${c.Tema || 'Geral'}</span>
+                            <h2 class="story-title">${c.Titulo}</h2>
+                            <p class="story-desc">${c.Resumo || ''}</p>
+                        </div>
+                        <a href="${c.Url || '#'}" target="_blank" class="story-link">LER CONTO ↗</a>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        window.filtrarContos = function() {
+            const termo = document.getElementById('inputBusca').value.toLowerCase();
+            const filtrados = todosOsContos.filter(c => 
+                (c.Titulo || "").toLowerCase().includes(termo) || (c.Tema || "").toLowerCase().includes(termo)
+            );
+            renderizar(filtrados);
+        };
+
+        window.salvarConto = async function() {
+            const senha = prompt("Chave de Acesso:");
+            if (senha !== "vall51") return alert("Acesso Negado!");
+            
+            const novoObj = {
+                Titulo: document.getElementById('campoTitulo').value,
+                Tema: document.getElementById('campoTema').value,
+                Resumo: document.getElementById('campoResumo').value,
+                Url: document.getElementById('campoLink').value,
+                url_capa: document.getElementById('campoCapa').value
+            };
+
+            const { error } = await supa.from('Histórias').insert([novoObj]);
+            if (error) alert("Erro: " + error.message);
+            else { alert("Sucesso!"); location.reload(); }
+        };
+
+        iniciar();
+    </script>
+</body>
+</html>
