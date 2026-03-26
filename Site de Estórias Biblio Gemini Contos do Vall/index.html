@@ -103,6 +103,20 @@
         }
         .story-link:hover { border-color: #4f46e5; }
 
+        .btn-novo {
+            background: #1e293b;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-novo:hover { background: #4f46e5; }
+
         #modal { 
             display: none; 
             position: fixed; 
@@ -131,7 +145,9 @@
         <a href="#" onclick="mostrarSobre()" class="hover:text-indigo-600 transition">SOBRE O PROJETO</a>
     </div>
 
-    <div id="containerBusca" style="width: 100%; max-width: 450px;">
+    <button id="btnNovoConto" class="btn-novo" onclick="abrirModal()">+ NOVO CONTO</button>
+
+    <div id="containerBusca" style="width: 100%; max-width: 450px; margin-bottom: 20px;">
         <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
         style="width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); outline: none;">
     </div>
@@ -156,124 +172,4 @@
             </a>
             <a href="mailto:valdirp0@gmail.com" 
                style="color: #1e293b; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; text-decoration: none;">
-               ✉️ E-MAIL: valdirp0@gmail.com
-         </a>
-   </div> 
-</div>
-<div id="storiesGrid"></div> ```
-    <div id="modal" onclick="if(event.target == this) fecharModal()">
-        <div style="background: white; padding: 30px; border-radius: 28px; width: 95%; max-width: 420px;">
-            <h2 style="font-weight: 900; font-size: 1.5rem; margin-bottom: 20px; color: #1e293b;">Publicar no Portal</h2>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="campoTitulo" placeholder="Título" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                <input type="text" id="campoTema" placeholder="Tema (Ex: Metafísica)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                <input type="text" id="campoCapa" placeholder="Link da Capa (URL da Imagem)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                <textarea id="campoResumo" placeholder="Breve resumo..." style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; height: 80px; resize: none;"></textarea>
-                <input type="text" id="campoLink" placeholder="Link do Conto" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-            </div>
-            <div style="display: gap: 10px; margin-top: 15px;">
-                <button onclick="salvarConto()" style="width: 100%; background: #4f46e5; color: white; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 8px;">Salvar</button>
-                <button onclick="fecharModal()" style="width: 100%; background: #f1f5f9; color: #64748b; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Sair</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const URL_S = 'https://hnsfhpaxahgjsscmyrts.supabase.co';
-        const KEY_S = 'sb_publishable_mdvhMhxRnL04nV-lSz0evw_O26WVlT7'; 
-        
-        let supa;
-        let todosOsContos = [];
-
-        async function iniciar() {
-            if (typeof supabase === 'undefined') {
-                setTimeout(iniciar, 100);
-                return;
-            }
-            supa = supabase.createClient(URL_S, KEY_S);
-            await carregarContos();
-        }
-
-        function mostrarSobre() {
-            document.getElementById('storiesGrid').style.display = 'none';
-            document.getElementById('containerBusca').style.display = 'none';
-            document.getElementById('secaoSobre').style.display = 'block';
-        }
-
-        function mostrarHome() {
-            document.getElementById('storiesGrid').style.display = 'grid';
-            document.getElementById('containerBusca').style.display = 'block';
-            document.getElementById('secaoSobre').style.display = 'none';
-        }
-
-        window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
-        window.fecharModal = () => document.getElementById('modal').style.display = 'none';
-
-        async function carregarContos() {
-            try {
-                const { data, error } = await supa.from('Histórias').select('*');
-                if (error) throw error;
-                if (data) {
-                    todosOsContos = data.filter(c => c.Titulo && c.Titulo !== "EMPTY");
-                    renderizar(todosOsContos);
-                }
-            } catch (err) {
-                console.error("Erro Supabase:", err.message);
-                document.getElementById('storiesGrid').innerHTML = "<p class='text-red-500 font-bold'>Erro ao carregar dados do portal.</p>";
-            }
-        }
-
-        function renderizar(lista) {
-            const grid = document.getElementById('storiesGrid');
-            grid.innerHTML = "";
-            lista.forEach(c => {
-                const div = document.createElement('div');
-                div.className = 'story-card';
-                const foto = c.url_capa || 'https://via.placeholder.com/150?text=Vall+Contos';
-                div.innerHTML = `
-                    <img src="${foto}" class="story-img" onerror="this.src='https://via.placeholder.com/150?text=Erro'">
-                    <div class="story-content">
-                        <div>
-                            <span class="story-tag">${c.Tema || 'Geral'}</span>
-                            <h2 class="story-title">${c.Titulo}</h2>
-                            <p class="story-desc">${c.Resumo || ''}</p>
-                        </div>
-                        <a href="${c.Url || '#'}" target="_blank" class="story-link">LER CONTO ↗</a>
-                    </div>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        window.filtrarContos = function() {
-            const termo = document.getElementById('inputBusca').value.toLowerCase();
-            const filtrados = todosOsContos.filter(c => 
-                (c.Titulo || "").toLowerCase().includes(termo) || 
-                (c.Tema || "").toLowerCase().includes(termo)
-            );
-            renderizar(filtrados);
-        };
-
-        window.salvarConto = async function() {
-            const senha = prompt("Chave de Acesso:");
-            if (senha !== "vall51") return alert("Acesso Negado!");
-            const novoObj = {
-                Titulo: document.getElementById('campoTitulo').value,
-                Tema: document.getElementById('campoTema').value,
-                Resumo: document.getElementById('campoResumo').value,
-                Url: document.getElementById('campoLink').value,
-                url_capa: document.getElementById('campoCapa').value
-            };
-            const { error } = await supa.from('Histórias').insert([novoObj]);
-            if (error) alert("Falha ao salvar: " + error.message);
-            else {
-                alert("Nova jornada publicada!");
-                location.reload();
-            }
-        };
-
-        iniciar();
-    </script>
-</body>
-</html>
+               ✉️ E-MAIL: valdir
