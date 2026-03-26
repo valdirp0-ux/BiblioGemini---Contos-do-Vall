@@ -103,7 +103,6 @@
         }
         .story-link:hover { border-color: #4f46e5; }
 
-        /* Botão estilizado */
         .btn-novo {
             background: #1e293b;
             color: white;
@@ -116,7 +115,7 @@
             cursor: pointer;
             transition: all 0.3s;
             border: none;
-            display: none; /* Começa escondido */
+            display: none; /* Escondido por padrão */
         }
         .btn-novo:hover { background: #4f46e5; transform: scale(1.05); }
 
@@ -157,14 +156,7 @@
 
     <div id="secaoSobre" style="display: none; max-width: 700px; line-height: 1.8; color: #334155; background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.05);">
         <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 20px; color: #1e293b;">O Portal Contos do Vall</h2>
-        <p class="mb-4">
-            Este espaço nasceu da união entre a <strong>psicanálise, a metafísica e a prática de mindfulness</strong>. 
-            Os contos oníricos aqui publicados, são frutos de um processo de escrutínio de sonhos e vivências oníricas.
-        </p>
-        <p class="mb-6">
-            Sou terapeuta especializado em meditação mindfulness e terapias energéticas. Utilizo estas histórias como ponte buscando a transmutação interior.
-        </p>
-
+        <p class="mb-4">Este espaço nasceu da união entre a psicanálise, a metafísica e a prática de mindfulness.</p>
         <div style="display: flex; flex-direction: column; gap: 12px;">
             <span style="color: #1e293b; font-weight: 800; font-size: 0.85rem;">📸 INSTAGRAM: @valdirp47</span>
             <span style="color: #1e293b; font-weight: 800; font-size: 0.85rem;">✉️ E-MAIL: valdirp0@gmail.com</span>
@@ -179,9 +171,9 @@
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <input type="text" id="campoTitulo" placeholder="Título" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
                 <input type="text" id="campoTema" placeholder="Tema" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                <input type="text" id="campoCapa" placeholder="Link da Capa (Postimages)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <input type="text" id="campoCapa" placeholder="Link da Capa" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
                 <textarea id="campoResumo" placeholder="Resumo..." style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; height: 80px; resize: none;"></textarea>
-                <input type="text" id="campoLink" placeholder="Link do Conto (Gemini Share)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <input type="text" id="campoLink" placeholder="Link do Conto" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
             </div>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
                 <button onclick="salvarConto()" style="width: 100%; background: #4f46e5; color: white; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Salvar</button>
@@ -205,10 +197,13 @@
             }
             supa = supabase.createClient(URL_S, KEY_S);
             
-            // LÓGICA CORRIGIDA: Só mostra se admin=true estiver na URL
+            // LÓGICA CORRETA:
             const urlParams = new URLSearchParams(window.location.search);
+            // Somente mostra se a URL tiver ?admin=true
             if (urlParams.get('admin') === 'true') {
                 document.getElementById('btnNovoConto').style.display = 'block';
+            } else {
+                document.getElementById('btnNovoConto').style.display = 'none';
             }
 
             await carregarContos();
@@ -286,7 +281,7 @@
 
             const { error } = await supa.from('Histórias').insert([novoObj]);
             if (error) alert("Erro: " + error.message);
-            else { alert("Sucesso!"); location.reload(); }
+            else { alert("Sucesso!"); fecharModal(); location.reload(); }
         };
 
         iniciar();
