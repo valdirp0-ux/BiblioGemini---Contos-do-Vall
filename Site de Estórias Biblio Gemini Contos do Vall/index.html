@@ -142,9 +142,9 @@
     <p class="subtitulo">"ONDE OS SONHOS SE TRANSFORMAM EM ESTÓRIAS."</p>
     
     <div class="mb-8 flex gap-4 font-bold text-xs text-slate-400 tracking-widest">
-        <a href="#" onclick="mostrarHome()" class="hover:text-indigo-600 transition">INÍCIO</a>
+        <a href="javascript:void(0)" onclick="mostrarHome()" class="hover:text-indigo-600 transition">INÍCIO</a>
         <span>|</span>
-        <a href="#" onclick="mostrarSobre()" class="hover:text-indigo-600 transition">SOBRE O PROJETO</a>
+        <a href="javascript:void(0)" onclick="mostrarSobre()" class="hover:text-indigo-600 transition">SOBRE O PROJETO</a>
     </div>
 
     <button id="btnNovoConto" class="btn-novo" onclick="abrirModal()">+ NOVO CONTO</button>
@@ -198,11 +198,9 @@
             supa = supabase.createClient(URL_S, KEY_S);
             
             const urlParams = new URLSearchParams(window.location.search);
-            // REGRA: Mostra o botão APENAS se tiver ?admin=true
+            // Mostra botão apenas se ?admin=true
             if (urlParams.get('admin') === 'true') {
                 document.getElementById('btnNovoConto').style.display = 'block';
-            } else {
-                document.getElementById('btnNovoConto').style.display = 'none';
             }
 
             await carregarContos();
