@@ -138,11 +138,33 @@
     <h1 class="titulo-vall">CONTOS DO VALL</h1>
     <p class="subtitulo">"ONDE OS SONHOS SE TRANSFORMAM EM ESTÓRIAS."</p>
     
+    <div class="mb-8 flex gap-4 font-bold text-xs text-slate-400 tracking-widest">
+        <a href="#" onclick="mostrarHome()" class="hover:text-indigo-600 transition">INÍCIO</a>
+        <span>|</span>
+        <a href="#" onclick="mostrarSobre()" class="hover:text-indigo-600 transition">SOBRE O PROJETO</a>
+    </div>
+    
     <button id="btnAdmin" class="btn-novo" onclick="abrirModal()" style="display: none;">+ Novo Conto</button>
     
-    <div style="width: 100%; max-width: 450px;">
+    <div id="containerBusca" style="width: 100%; max-width: 450px;">
         <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
         style="width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); outline: none;">
+    </div>
+
+    <div id="secaoSobre" style="display: none; max-width: 700px; line-height: 1.8; color: #334155; background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.05);">
+        <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 20px; color: #1e293b;">O Portal Contos do Vall</h2>
+        <p class="mb-4">
+            Este espaço nasceu da união entre a <strong>psicanálise, a metafísica e a prática de mindfulness</strong>. 
+            Os contos oníricos aqui publicado é fruto de um processo de escrutínio de sonhos e vivências oníricas, 
+            transformadas em narrativas para auxiliar no autoconhecimento. É importante lembrar que, embora os contos
+            possam ser criados com base em prompts e fotos, eles não são 100% reais.
+        </p>
+        <p class="mb-6">
+            Sou terapeuta especializado em meditação mindfulness e terapias energéticas. Utilizo estas estórias 
+            como uma ponte entre o inconsciente e a realidade consciente, buscando a transmutação interior 
+            através do despertar simbólico contido nos sonhos.
+        </p>
+        <button onclick="mostrarHome()" style="color: #4f46e5; font-weight: 800; font-size: 0.9rem;">← VOLTAR PARA AS ESTÓRIAS</button>
     </div>
 
     <div id="storiesGrid"></div>
@@ -155,7 +177,7 @@
                 <input type="text" id="campoTema" placeholder="Tema (Ex: Metafísica)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
                 <input type="text" id="campoCapa" placeholder="Link da Capa (URL da Imagem)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
                 <textarea id="campoResumo" placeholder="Breve resumo..." style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; height: 80px; resize: none;"></textarea>
-                <input type="text" id="campoLink" placeholder="Link do Conto (Gemini)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <input type="text" id="campoLink" placeholder="Link do Conto" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
             </div>
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button onclick="salvarConto()" style="flex: 2; background: #4f46e5; color: white; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Salvar</button>
@@ -182,38 +204,43 @@
             verificarAcessoAdmin();
         }
 
+        // Funções de Navegação
+        function mostrarSobre() {
+            document.getElementById('storiesGrid').style.display = 'none';
+            document.getElementById('containerBusca').style.display = 'none';
+            document.getElementById('secaoSobre').style.display = 'block';
+        }
+
+        function mostrarHome() {
+            document.getElementById('storiesGrid').style.display = 'grid';
+            document.getElementById('containerBusca').style.display = 'block';
+            document.getElementById('secaoSobre').style.display = 'none';
+        }
+
         window.abrirModal = () => document.getElementById('modal').style.display = 'flex';
         window.fecharModal = () => document.getElementById('modal').style.display = 'none';
 
         async function carregarContos() {
             try {
-                // Conecta na tabela 'Histórias' conforme o banco
                 const { data, error } = await supa.from('Histórias').select('*');
-                
                 if (error) throw error;
-
                 if (data) {
-                    // Ignora a linha de teste vazia
                     todosOsContos = data.filter(c => c.Titulo && c.Titulo !== "EMPTY");
                     renderizar(todosOsContos);
                 }
             } catch (err) {
                 console.error("Erro Supabase:", err.message);
-                document.getElementById('storiesGrid').innerHTML = "<p class='text-red-500 font-bold'>Erro ao carregar dados do portal. Verifique a chave API.</p>";
+                document.getElementById('storiesGrid').innerHTML = "<p class='text-red-500 font-bold'>Erro ao carregar dados do portal.</p>";
             }
         }
 
         function renderizar(lista) {
             const grid = document.getElementById('storiesGrid');
             grid.innerHTML = "";
-
             lista.forEach(c => {
                 const div = document.createElement('div');
                 div.className = 'story-card';
-                
-                // Usa a coluna url_capa ou imagem padrão
                 const foto = c.url_capa || 'https://via.placeholder.com/150?text=Vall+Contos';
-
                 div.innerHTML = `
                     <img src="${foto}" class="story-img" onerror="this.src='https://via.placeholder.com/150?text=Erro'">
                     <div class="story-content">
@@ -241,7 +268,6 @@
         window.salvarConto = async function() {
             const senha = prompt("Chave de Acesso:");
             if (senha !== "vall51") return alert("Acesso Negado!");
-
             const novoObj = {
                 Titulo: document.getElementById('campoTitulo').value,
                 Tema: document.getElementById('campoTema').value,
@@ -249,9 +275,7 @@
                 Url: document.getElementById('campoLink').value,
                 url_capa: document.getElementById('campoCapa').value
             };
-
             const { error } = await supa.from('Histórias').insert([novoObj]);
-
             if (error) {
                 alert("Falha ao salvar: " + error.message);
             } else {
