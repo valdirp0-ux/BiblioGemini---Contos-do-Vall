@@ -115,7 +115,7 @@
             cursor: pointer;
             transition: all 0.3s;
             border: none;
-            display: none; /* Escondido por padrão */
+            display: none; 
         }
         .btn-novo:hover { background: #4f46e5; transform: scale(1.05); }
 
@@ -197,9 +197,8 @@
             }
             supa = supabase.createClient(URL_S, KEY_S);
             
-            // LÓGICA CORRETA:
             const urlParams = new URLSearchParams(window.location.search);
-            // Somente mostra se a URL tiver ?admin=true
+            // REGRA: Mostra o botão APENAS se tiver ?admin=true
             if (urlParams.get('admin') === 'true') {
                 document.getElementById('btnNovoConto').style.display = 'block';
             } else {
