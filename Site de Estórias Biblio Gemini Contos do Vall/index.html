@@ -153,7 +153,8 @@
         <input type="text" id="inputBusca" onkeyup="filtrarContos()" placeholder="🔍 Buscar por título ou tema..." 
         style="width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); outline: none;">
     </div>
-<div id="secaoSobre" style="display: none; max-width: 700px; line-height: 1.8; color: #334155; background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.05);">
+
+    <div id="secaoSobre" style="display: none; max-width: 700px; line-height: 1.8; color: #334155; background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.05);">
         <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 20px; color: #1e293b;">O Portal Contos do Vall</h2>
         <p class="mb-4">Este espaço nasceu da união entre a psicanálise, a metafísica e a prática de mindfulness.</p>
         
@@ -165,7 +166,22 @@
                 ✉️ E-MAIL: valdirp0@gmail.com
             </a>
         </div> 
-    </div> <div id="storiesGrid"></div>
+    </div>
+
+    <div id="storiesGrid"></div>
+
+    <div id="areaComentarios" style="max-width: 1100px; width: 100%; margin-top: 50px; background: white; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <h3 style="font-weight: 900; color: #1e293b; margin-bottom: 20px; text-transform: uppercase; font-size: 1.2rem;">Deixe um comentário</h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <input type="text" id="nomeLeitor" placeholder="Seu nome" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; font-family: inherit;">
+            <textarea id="textoComentario" placeholder="O que você sentiu ao ler este conto?" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; height: 100px; outline: none; resize: none; font-family: inherit;"></textarea>
+            
+            <button onclick="enviarComentario()" style="background: #1e293b; color: white; padding: 14px; border-radius: 12px; font-weight: 900; cursor: pointer; transition: 0.3s; border: none; letter-spacing: 1px;">
+                PUBLICAR COMENTÁRIO
+            </button>
+        </div>
+    </div>
 
     <div id="modal" onclick="if(event.target == this) fecharModal()">
         <div style="background: white; padding: 30px; border-radius: 28px; width: 95%; max-width: 420px;">
@@ -200,7 +216,6 @@
             supa = supabase.createClient(URL_S, KEY_S);
             
             const urlParams = new URLSearchParams(window.location.search);
-            // Mostra botão apenas se ?admin=true
             if (urlParams.get('admin') === 'true') {
                 document.getElementById('btnNovoConto').style.display = 'block';
             }
@@ -212,12 +227,14 @@
             document.getElementById('storiesGrid').style.display = 'none';
             document.getElementById('containerBusca').style.display = 'none';
             document.getElementById('btnNovoConto').style.display = 'none';
+            document.getElementById('areaComentarios').style.display = 'none';
             document.getElementById('secaoSobre').style.display = 'block';
         }
 
         function mostrarHome() {
             document.getElementById('storiesGrid').style.display = 'grid';
             document.getElementById('containerBusca').style.display = 'block';
+            document.getElementById('areaComentarios').style.display = 'block';
             document.getElementById('secaoSobre').style.display = 'none';
             
             const urlParams = new URLSearchParams(window.location.search);
@@ -281,6 +298,31 @@
             const { error } = await supa.from('Histórias').insert([novoObj]);
             if (error) alert("Erro: " + error.message);
             else { alert("Sucesso!"); fecharModal(); location.reload(); }
+        };
+
+        // NOVA FUNÇÃO: ENVIAR COMENTÁRIO PARA O SUPABASE
+        window.enviarComentario = async function() {
+            const nome = document.getElementById('nomeLeitor').value;
+            const msg = document.getElementById('textoComentario').value;
+            const termoBusca = document.getElementById('inputBusca').value || "Geral";
+
+            if (!nome || !msg) return alert("Por favor, preencha seu nome e o comentário!");
+
+            const { error } = await supa.from('Comentários').insert([
+                { 
+                    "Nome:": nome, 
+                    "Comentário:": msg, 
+                    "Conto:": termoBusca 
+                }
+            ]);
+
+            if (error) {
+                alert("Erro ao enviar: " + error.message);
+            } else {
+                alert("Comentário enviado com sucesso!");
+                document.getElementById('nomeLeitor').value = '';
+                document.getElementById('textoComentario').value = '';
+            }
         };
 
         iniciar();
