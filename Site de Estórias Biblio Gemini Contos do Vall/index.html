@@ -8,37 +8,48 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 
-/* Animação para o gradiente de fundo fluir */
-@keyframes backgroundFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* Animação de Cintilação */
+@keyframes starTwinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.1); }
 }
 
-/* Animação para a aura pulsar */
-@keyframes auraPulse {
-    0% { text-shadow: 0 0 5px rgba(124, 58, 237, 0.5), 0 0 10px rgba(124, 58, 237, 0.3); }
-    50% { text-shadow: 0 0 15px rgba(124, 58, 237, 0.9), 0 0 25px rgba(124, 58, 237, 0.7); }
-    100% { text-shadow: 0 0 5px rgba(124, 58, 237, 0.5), 0 0 10px rgba(124, 58, 237, 0.3); }
-}
-
-/* Estilo para o Título */
+/* Estilo para o Título (Roxo Sólido com Aura Sutil) */
 .titulo-vall {
-    background: linear-gradient(-45deg, #7c3aed, #4f46e5, #ec4899);
-    background-size: 300% 300%;
-    -webkit-background-clip: text; /* Clipa o fundo apenas no texto */
-    -webkit-text-fill-color: transparent; /* Deixa a cor original transparente para o fundo aparecer */
-    animation: backgroundFlow 10s ease infinite, auraPulse 4s ease-in-out infinite;
-    display: inline-block; /* Necessário para o gradiente de fundo funcionar */
+    color: #7c3aed;
+    text-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+    position: relative; /* Para posicionar as estrelas */
+    display: inline-block;
 }
 
-/* Estilo para o Subtítulo */
+/* Estrela Esquerda (Antes do título) */
+.titulo-vall::before {
+    content: '✦'; /* Caractere de estrela */
+    color: #ec4899; /* Rosa */
+    font-size: 1.2rem;
+    position: absolute;
+    left: -35px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: starTwinkle 3s infinite ease-in-out;
+}
+
+/* Estrela Direita (Depois do título) */
+.titulo-vall::after {
+    content: '✧'; /* Caractere de estrela diferente */
+    color: #4f46e5; /* Azul/Índigo */
+    font-size: 1rem;
+    position: absolute;
+    right: -35px;
+    top: 30%;
+    transform: translateY(-50%);
+    animation: starTwinkle 3s infinite ease-in-out 1.5s; /* Começa 1.5s depois */
+}
+
+/* Estilo para o Subtítulo (Índigo) */
 .subtitulo {
     color: #4f46e5;
-    background: linear-gradient(90deg, #ec4899, #4f46e5);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: bold;
+    font-weight: 800;
 }
         body { 
             font-family: 'Inter', sans-serif; 
