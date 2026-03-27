@@ -8,48 +8,80 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 
-/* Animação de Cintilação */
+/* Animação para o gradiente de fundo fluir */
+@keyframes backgroundFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Animação para a aura pulsar (Sombra do Texto) */
+@keyframes auraPulse {
+    0%, 100% { 
+        text-shadow: 
+            0 0 10px rgba(251, 191, 36, 0.4), /* Dourado Mais Suave */
+            0 0 20px rgba(251, 191, 36, 0.2); 
+    }
+    50% { 
+        text-shadow: 
+            0 0 25px rgba(251, 191, 36, 1), /* Dourado Brilhante */
+            0 0 35px rgba(251, 191, 36, 0.8),
+            0 0 5px rgba(251, 191, 36, 0.5); /* Efeito Neon Sutil */
+    }
+}
+
+/* Animação de Cintilação das Estrelas */
 @keyframes starTwinkle {
     0%, 100% { opacity: 0.2; transform: scale(0.8); }
     50% { opacity: 1; transform: scale(1.1); }
 }
 
-/* Estilo para o Título (Roxo Sólido com Aura Sutil) */
+/* ESTILO DO TÍTULO: DOURADO BRILHANTE COM AURA PULSANTE */
 .titulo-vall {
-    color: #7c3aed;
-    text-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
-    position: relative; /* Para posicionar as estrelas */
-    display: inline-block;
+    background: linear-gradient(-45deg, #fbbf24, #f59e0b, #eab308);
+    background-size: 300% 300%;
+    -webkit-background-clip: text; /* Clipa o fundo apenas no texto */
+    -webkit-text-fill-color: transparent; /* Deixa a cor original transparente */
+    animation: backgroundFlow 10s ease infinite, auraPulse 4s ease-in-out infinite;
+    display: inline-block; /* Necessário para o gradiente de fundo e pseudo-elementos */
+    position: relative; /* Para as estrelas aparecerem */
+    font-weight: 900; /* Força o peso Inter ExtraBold */
+    font-size: 2.8rem; /* Mantém o tamanho original */
+    margin-bottom: 5px; /* Mantém a margem original */
 }
 
-/* Estrela Esquerda (Antes do título) */
+/* ESTRELA ESQUERDA (Antes do título) */
 .titulo-vall::before {
-    content: '✦'; /* Caractere de estrela */
-    color: #ec4899; /* Rosa */
-    font-size: 1.2rem;
+    content: '✦'; /* Caractere de estrela cintilante */
+    color: #fcd34d; /* Dourado Mais Claro */
+    font-size: 1.3rem; /* Tamanho proporcional */
     position: absolute;
-    left: -35px;
+    left: -40px;
     top: 50%;
     transform: translateY(-50%);
     animation: starTwinkle 3s infinite ease-in-out;
 }
 
-/* Estrela Direita (Depois do título) */
+/* ESTRELA DIREITA (Depois do título) */
 .titulo-vall::after {
     content: '✧'; /* Caractere de estrela diferente */
-    color: #4f46e5; /* Azul/Índigo */
+    color: #fb923c; /* Amarelo Laranja */
     font-size: 1rem;
     position: absolute;
     right: -35px;
-    top: 30%;
+    top: 30%; /* Ligeiramente descentralizada */
     transform: translateY(-50%);
     animation: starTwinkle 3s infinite ease-in-out 1.5s; /* Começa 1.5s depois */
 }
 
-/* Estilo para o Subtítulo (Índigo) */
+/* ESTILO DO SUBTÍTULO: DOURADO SUAVE E BRILHANTE */
 .subtitulo {
-    color: #4f46e5;
-    font-weight: 800;
+    background: linear-gradient(90deg, #fcd34d, #fb923c, #fcd34d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800; /* Força o peso Inter Bold */
+    font-size: 0.85rem; /* Mantém o tamanho original */
+    color: #f59e0b; /* Fallback para navegadores antigos */
 }
         body { 
             font-family: 'Inter', sans-serif; 
