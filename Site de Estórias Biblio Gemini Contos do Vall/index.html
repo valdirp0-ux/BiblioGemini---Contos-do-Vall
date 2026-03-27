@@ -8,100 +8,18 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 
-/* Animação para a aura pulsar (Sombra do Texto) */
-@keyframes auraPulse {
-    0%, 100% { 
-        text-shadow: 
-            0 0 8px rgba(251, 191, 36, 0.4), /* Amarelo Mais Suave */
-            0 0 15px rgba(251, 191, 36, 0.2); 
-    }
-    50% { 
-        text-shadow: 
-            0 0 20px rgba(251, 191, 36, 1), /* Amarelo Vibrante no pico */
-            0 0 30px rgba(251, 191, 36, 0.7);
-    }
-}
+        /* --- ANIMAÇÕES MÍSTICAS --- */
+        @keyframes auraPulse {
+            0%, 100% { text-shadow: 0 0 8px rgba(251, 191, 36, 0.4), 0 0 15px rgba(251, 191, 36, 0.2); }
+            50% { text-shadow: 0 0 20px rgba(251, 191, 36, 1), 0 0 30px rgba(251, 191, 36, 0.7); }
+        }
 
-/* Animação de Cintilação das Estrelas */
-@keyframes starTwinkle {
-    0%, 100% { opacity: 0.2; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1.1); }
-}
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
 
-/* ESTILO DO TÍTULO: PRETO AZULADO ESCURO COM HALO AMARELO */
-.titulo-vall {
-    color: #1e293b; /* Preto Azulado Escuro (Original do site) */
-    font-weight: 900; /* ExtraBold */
-    font-size: 2.8rem; /* Tamanho original */
-    margin-bottom: 5px; /* Margem original */
-    text-transform: uppercase; /* Força maiúsculas */
-    animation: auraPulse 4s ease-in-out infinite; /* Pulsar místico */
-    display: inline-block;
-    position: relative; /* Para posicionar as estrelas */
-}
-
-/* ESTRELA ESQUERDA (Antes do título) */
-.titulo-vall::before {
-    content: '✦'; /* Estrela cintilante */
-    color: #fbbf24; /* Amarelo/Dourado Místico */
-    font-size: 1.3rem;
-    position: absolute;
-    left: -40px; /* Distância */
-    top: 50%;
-    transform: translateY(-50%);
-    animation: starTwinkle 3s infinite ease-in-out;
-}
-
-/* ESTRELA DIREITA (Depois do título) */
-.titulo-vall::after {
-    content: '✧'; /* Estrela diferente */
-    color: #fbbf24;
-    font-size: 1rem;
-    position: absolute;
-    right: -35px;
-    top: 30%; /* Ligeiramente descentralizada */
-    transform: translateY(-50%);
-    animation: starTwinkle 3s infinite ease-in-out 1.5s; /* Começa 1.5s depois */
-}
-
-/* ESTILO DO SUBTÍTULO: MESMO TOM ESCURO DO TÍTULO */
-.subtitulo {
-    color: #1e293b; /* Preto Azulado Escuro (Mesmo tom) */
-    font-weight: bold; /* Bold */
-    font-size: 0.85rem; /* Tamanho original */
-    letter-spacing: 0.5px; /* Sutil espaçamento para elegância */
-}
-
-        /* --- ESTILO PARA A ÁREA DE COMENTÁRIOS --- */
-#areaComentarios {
-    transition: all 0.4s ease;
-}
-
-/* Efeito de borda dourada ao passar o mouse na caixa */
-#areaComentarios:hover {
-    border-color: #fbbf24; 
-    box-shadow: 0 10px 25px rgba(251, 191, 36, 0.15);
-}
-
-/* Aura dourada nos campos de texto ao clicar para digitar */
-#areaComentarios input:focus, 
-#areaComentarios textarea:focus {
-    outline: none;
-    border-color: #fbbf24 !important;
-    box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
-}
-
-/* Botão "Publicar" escuro com brilho dourado no mouse */
-#areaComentarios button {
-    background-color: #1e293b !important;
-    color: white !important;
-    transition: all 0.3s ease;
-}
-
-#areaComentarios button:hover {
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
-    transform: scale(1.02);
-}
+        /* --- ESTILO GLOBAL --- */
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: #f8fafc; 
@@ -111,23 +29,83 @@
             align-items: center; 
             min-height: 100vh;
         }
-        
-        .titulo-vall { 
-            font-size: 2.8rem; 
-            font-weight: 900; 
-            color: #1e293b; 
-            text-transform: uppercase; 
-            margin-bottom: 5px; 
-            text-align: center;
-        }
-        
-        .subtitulo { 
-            color: #64748b; 
-            font-style: italic; 
-            margin-bottom: 30px; 
+
+        /* --- TÍTULO E ESTRELAS --- */
+        .titulo-vall {
+            color: #1e293b !important;
+            font-weight: 900 !important;
+            font-size: 2.8rem !important;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            animation: auraPulse 4s ease-in-out infinite;
+            display: inline-block;
+            position: relative;
             text-align: center;
         }
 
+        .titulo-vall::before {
+            content: '✦';
+            color: #fbbf24;
+            font-size: 1.3rem;
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: starTwinkle 3s infinite ease-in-out;
+        }
+
+        .titulo-vall::after {
+            content: '✧';
+            color: #fbbf24;
+            font-size: 1rem;
+            position: absolute;
+            right: -35px;
+            top: 30%;
+            transform: translateY(-50%);
+            animation: starTwinkle 3s infinite ease-in-out 1.5s;
+        }
+
+        .subtitulo { 
+            color: #1e293b !important; 
+            font-weight: bold !important;
+            font-size: 0.85rem !important;
+            letter-spacing: 0.5px;
+            margin-bottom: 30px; 
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* --- ÁREA DE COMENTÁRIOS --- */
+        #areaComentarios {
+            transition: all 0.4s ease;
+            background: white;
+        }
+
+        #areaComentarios:hover {
+            border-color: #fbbf24 !important; 
+            box-shadow: 0 10px 25px rgba(251, 191, 36, 0.15);
+        }
+
+        #areaComentarios input:focus, 
+        #areaComentarios textarea:focus {
+            outline: none;
+            border-color: #fbbf24 !important;
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+        }
+
+        #areaComentarios button {
+            background-color: #1e293b !important;
+            color: white !important;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        #areaComentarios button:hover {
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+            transform: scale(1.02);
+        }
+
+        /* --- GRID E CARDS --- */
         #storiesGrid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
@@ -146,92 +124,31 @@
             gap: 15px; 
             min-height: 190px; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            transition: transform 0.2s; 
-        }
-       .story-card:hover {
-    transform: translateY(-8px); /* Eleva o card um pouco mais */
-    border-color: #fbbf24; /* A borda fica dourada */
-    box-shadow: 0 10px 20px rgba(251, 191, 36, 0.2), 0 0 15px rgba(251, 191, 36, 0.1); /* Aura dourada suave */
-    transition: all 0.3s ease; /* Transição suave para o efeito */
-}
-
-        .story-img { 
-            width: 100px; 
-            min-width: 100px; 
-            height: 140px; 
-            border-radius: 12px; 
-            object-fit: cover; 
-            background: #f1f5f9; 
+            transition: all 0.3s ease; 
         }
 
-        .story-content { 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            overflow: hidden; 
-            width: 100%; 
+        .story-card:hover {
+            transform: translateY(-8px);
+            border-color: #fbbf24;
+            box-shadow: 0 10px 20px rgba(251, 191, 36, 0.2), 0 0 15px rgba(251, 191, 36, 0.1);
         }
 
-        .story-tag { 
-            font-size: 10px; 
-            font-weight: 900; 
-            color: #7c3aed; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-        }
-
+        .story-img { width: 100px; min-width: 100px; height: 140px; border-radius: 12px; object-fit: cover; background: #f1f5f9; }
+        .story-content { display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; width: 100%; }
+        .story-tag { font-size: 10px; font-weight: 900; color: #7c3aed; text-transform: uppercase; letter-spacing: 1px; }
         .story-title { font-weight: 800; font-size: 1.1rem; color: #1e293b; line-height: 1.2; margin-top: 4px; }
-        .story-desc { 
-            font-size: 0.85rem; 
-            color: #64748b; 
-            margin-top: 6px;
-            display: -webkit-box; 
-            -webkit-line-clamp: 3; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-        }
-
-        .story-link { 
-            font-size: 11px; 
-            font-weight: 900; 
-            color: #4f46e5; 
-            text-decoration: none; 
-            align-self: flex-end; 
-            border-bottom: 2px solid transparent;
-            transition: 0.2s;
-        }
+        .story-desc { font-size: 0.85rem; color: #64748b; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .story-link { font-size: 11px; font-weight: 900; color: #4f46e5; text-decoration: none; align-self: flex-end; border-bottom: 2px solid transparent; transition: 0.2s; }
         .story-link:hover { border-color: #4f46e5; }
 
-        .btn-novo {
-            background: #1e293b;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 14px;
-            font-weight: 900;
-            font-size: 13px;
-            letter-spacing: 1px;
-            margin-bottom: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            display: none; 
-        }
+        .btn-novo { background: #1e293b; color: white; padding: 12px 24px; border-radius: 14px; font-weight: 900; font-size: 13px; letter-spacing: 1px; margin-bottom: 25px; cursor: pointer; transition: all 0.3s; border: none; display: none; }
         .btn-novo:hover { background: #4f46e5; transform: scale(1.05); }
 
-        #modal { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(15, 23, 42, 0.7); 
-            backdrop-filter: blur(8px); 
-            align-items: center; 
-            justify-content: center; 
-            z-index: 1000; 
-        }
+        #modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 1000; }
 
         @media (max-width: 768px) { 
             #storiesGrid { grid-template-columns: 1fr; } 
-            .titulo-vall { font-size: 2.2rem; }
+            .titulo-vall { font-size: 2.2rem !important; }
         }
     </style>
 </head>
@@ -260,13 +177,14 @@
             <input type="text" id="nomeLeitor" placeholder="Seu nome" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; font-size: 0.85rem;">
             <textarea id="textoComentario" placeholder="O que sentiu ao ler?" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; height: 60px; outline: none; resize: none; font-size: 0.85rem;"></textarea>
             
-            <button onclick="enviarComentario()" style="background: #1e293b; color: white; padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; border: none; font-size: 0.8rem; letter-spacing: 1px;">
+            <button onclick="enviarComentario()" style="padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; border: none; font-size: 0.8rem; letter-spacing: 1px;">
                 PUBLICAR COMENTÁRIO
             </button>
         </div>
     </div>
-<div id="listaComentarios" style="max-width: 450px; width: 100%; margin: 0 auto 40px auto; display: flex; flex-direction: column; gap: 15px;">
-    </div>
+
+    <div id="listaComentarios" style="max-width: 450px; width: 100%; margin: 0 auto 40px auto; display: flex; flex-direction: column; gap: 15px;"></div>
+
     <div id="secaoSobre" style="display: none; max-width: 700px; line-height: 1.8; color: #334155; background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.05);">
         <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 20px; color: #1e293b;">O Portal Contos do Vall</h2>
         <p class="mb-4">Este espaço nasceu da união entre a <strong>psicanálise, a metafísica e a prática de mindfulness</strong>. 
@@ -295,8 +213,8 @@
                 <input type="text" id="campoLink" placeholder="Link do Conto" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
             </div>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-                <button onclick="salvarConto()" style="width: 100%; background: #4f46e5; color: white; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Salvar</button>
-                <button onclick="fecharModal()" style="width: 100%; background: #f1f5f9; color: #64748b; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">Sair</button>
+                <button onclick="salvarConto()" style="width: 100%; background: #4f46e5; color: white; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; border:none;">Salvar</button>
+                <button onclick="fecharModal()" style="width: 100%; background: #f1f5f9; color: #64748b; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; border:none;">Sair</button>
             </div>
         </div>
     </div>
