@@ -40,7 +40,7 @@
             gap: 20px; 
             width: 100%; 
             max-width: 1100px; 
-            margin-top: 40px; 
+            margin-top: 20px; 
         }
 
         .story-card { 
@@ -154,6 +154,19 @@
         style="width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); outline: none;">
     </div>
 
+    <div id="areaComentarios" style="max-width: 450px; width: 100%; margin-bottom: 30px; background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <h3 style="font-weight: 900; color: #1e293b; margin-bottom: 15px; text-transform: uppercase; font-size: 0.85rem; text-align: center;">Deixe sua percepção</h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" id="nomeLeitor" placeholder="Seu nome" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; font-size: 0.85rem;">
+            <textarea id="textoComentario" placeholder="O que sentiu ao ler?" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; height: 60px; outline: none; resize: none; font-size: 0.85rem;"></textarea>
+            
+            <button onclick="enviarComentario()" style="background: #1e293b; color: white; padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; border: none; font-size: 0.8rem; letter-spacing: 1px;">
+                PUBLICAR COMENTÁRIO
+            </button>
+        </div>
+    </div>
+
     <div id="secaoSobre" style="display: none; max-width: 700px; line-height: 1.8; color: #334155; background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.05);">
         <h2 style="font-weight: 900; font-size: 1.8rem; margin-bottom: 20px; color: #1e293b;">O Portal Contos do Vall</h2>
         <p class="mb-4">Este espaço nasceu da união entre a psicanálise, a metafísica e a prática de mindfulness.</p>
@@ -169,22 +182,6 @@
     </div>
 
     <div id="storiesGrid"></div>
-
-    <div id="areaComentarios" style="max-width: 1100px; width: 100%; margin-top: 50px; background: white; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-        <h3 style="font-weight: 900; color: #1e293b; margin-bottom: 20px; text-transform: uppercase; font-size: 1.2rem;">Deixe um comentário</h3>
-        
-       <div id="areaComentarios" style="max-width: 450px; width: 100%; margin: 0 auto 40px auto; background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-    <h3 style="font-weight: 900; color: #1e293b; margin-bottom: 15px; text-transform: uppercase; font-size: 0.9rem; text-align: center;">Deixe sua percepção</h3>
-    
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-        <input type="text" id="nomeLeitor" placeholder="Seu nome" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; font-size: 0.85rem;">
-        <textarea id="textoComentario" placeholder="O que sentiu ao ler?" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; height: 60px; outline: none; resize: none; font-size: 0.85rem;"></textarea>
-        
-        <button onclick="enviarComentario()" style="background: #1e293b; color: white; padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; border: none; font-size: 0.8rem;">
-            PUBLICAR
-        </button>
-    </div>
-</div>
 
     <div id="modal" onclick="if(event.target == this) fecharModal()">
         <div style="background: white; padding: 30px; border-radius: 28px; width: 95%; max-width: 420px;">
@@ -303,7 +300,6 @@
             else { alert("Sucesso!"); fecharModal(); location.reload(); }
         };
 
-        // NOVA FUNÇÃO: ENVIAR COMENTÁRIO PARA O SUPABASE
         window.enviarComentario = async function() {
             const nome = document.getElementById('nomeLeitor').value;
             const msg = document.getElementById('textoComentario').value;
