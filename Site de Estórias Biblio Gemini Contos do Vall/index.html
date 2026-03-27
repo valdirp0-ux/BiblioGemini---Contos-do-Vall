@@ -117,7 +117,12 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
             transition: transform 0.2s; 
         }
-        .story-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+       .story-card:hover {
+    transform: translateY(-8px); /* Eleva o card um pouco mais */
+    border-color: #fbbf24; /* A borda fica dourada */
+    box-shadow: 0 10px 20px rgba(251, 191, 36, 0.2), 0 0 15px rgba(251, 191, 36, 0.1); /* Aura dourada suave */
+    transition: all 0.3s ease; /* Transição suave para o efeito */
+}
 
         .story-img { 
             width: 100px; 
