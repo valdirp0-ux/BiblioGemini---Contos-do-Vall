@@ -8,25 +8,17 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 
-/* Animação para o gradiente de fundo fluir */
-@keyframes backgroundFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
 /* Animação para a aura pulsar (Sombra do Texto) */
 @keyframes auraPulse {
     0%, 100% { 
         text-shadow: 
-            0 0 10px rgba(251, 191, 36, 0.4), /* Dourado Mais Suave */
-            0 0 20px rgba(251, 191, 36, 0.2); 
+            0 0 8px rgba(251, 191, 36, 0.4), /* Amarelo Mais Suave */
+            0 0 15px rgba(251, 191, 36, 0.2); 
     }
     50% { 
         text-shadow: 
-            0 0 25px rgba(251, 191, 36, 1), /* Dourado Brilhante */
-            0 0 35px rgba(251, 191, 36, 0.8),
-            0 0 5px rgba(251, 191, 36, 0.5); /* Efeito Neon Sutil */
+            0 0 20px rgba(251, 191, 36, 1), /* Amarelo Vibrante no pico */
+            0 0 30px rgba(251, 191, 36, 0.7);
     }
 }
 
@@ -36,27 +28,25 @@
     50% { opacity: 1; transform: scale(1.1); }
 }
 
-/* ESTILO DO TÍTULO: DOURADO BRILHANTE COM AURA PULSANTE */
+/* ESTILO DO TÍTULO: PRETO AZULADO ESCURO COM HALO AMARELO */
 .titulo-vall {
-    background: linear-gradient(-45deg, #fbbf24, #f59e0b, #eab308);
-    background-size: 300% 300%;
-    -webkit-background-clip: text; /* Clipa o fundo apenas no texto */
-    -webkit-text-fill-color: transparent; /* Deixa a cor original transparente */
-    animation: backgroundFlow 10s ease infinite, auraPulse 4s ease-in-out infinite;
-    display: inline-block; /* Necessário para o gradiente de fundo e pseudo-elementos */
-    position: relative; /* Para as estrelas aparecerem */
-    font-weight: 900; /* Força o peso Inter ExtraBold */
-    font-size: 2.8rem; /* Mantém o tamanho original */
-    margin-bottom: 5px; /* Mantém a margem original */
+    color: #1e293b; /* Preto Azulado Escuro (Original do site) */
+    font-weight: 900; /* ExtraBold */
+    font-size: 2.8rem; /* Tamanho original */
+    margin-bottom: 5px; /* Margem original */
+    text-transform: uppercase; /* Força maiúsculas */
+    animation: auraPulse 4s ease-in-out infinite; /* Pulsar místico */
+    display: inline-block;
+    position: relative; /* Para posicionar as estrelas */
 }
 
 /* ESTRELA ESQUERDA (Antes do título) */
 .titulo-vall::before {
-    content: '✦'; /* Caractere de estrela cintilante */
-    color: #fcd34d; /* Dourado Mais Claro */
-    font-size: 1.3rem; /* Tamanho proporcional */
+    content: '✦'; /* Estrela cintilante */
+    color: #fbbf24; /* Amarelo/Dourado Místico */
+    font-size: 1.3rem;
     position: absolute;
-    left: -40px;
+    left: -40px; /* Distância */
     top: 50%;
     transform: translateY(-50%);
     animation: starTwinkle 3s infinite ease-in-out;
@@ -64,8 +54,8 @@
 
 /* ESTRELA DIREITA (Depois do título) */
 .titulo-vall::after {
-    content: '✧'; /* Caractere de estrela diferente */
-    color: #fb923c; /* Amarelo Laranja */
+    content: '✧'; /* Estrela diferente */
+    color: #fbbf24;
     font-size: 1rem;
     position: absolute;
     right: -35px;
@@ -74,14 +64,12 @@
     animation: starTwinkle 3s infinite ease-in-out 1.5s; /* Começa 1.5s depois */
 }
 
-/* ESTILO DO SUBTÍTULO: DOURADO SUAVE E BRILHANTE */
+/* ESTILO DO SUBTÍTULO: MESMO TOM ESCURO DO TÍTULO */
 .subtitulo {
-    background: linear-gradient(90deg, #fcd34d, #fb923c, #fcd34d);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 800; /* Força o peso Inter Bold */
-    font-size: 0.85rem; /* Mantém o tamanho original */
-    color: #f59e0b; /* Fallback para navegadores antigos */
+    color: #1e293b; /* Preto Azulado Escuro (Mesmo tom) */
+    font-weight: bold; /* Bold */
+    font-size: 0.85rem; /* Tamanho original */
+    letter-spacing: 0.5px; /* Sutil espaçamento para elegância */
 }
         body { 
             font-family: 'Inter', sans-serif; 
