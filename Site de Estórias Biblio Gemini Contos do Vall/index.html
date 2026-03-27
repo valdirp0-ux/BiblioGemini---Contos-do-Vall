@@ -19,6 +19,11 @@
             50% { opacity: 1; transform: scale(1.1); }
         }
 
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
         /* --- ESTILO GLOBAL --- */
         body { 
             font-family: 'Inter', sans-serif; 
@@ -73,6 +78,34 @@
             margin-bottom: 30px; 
             text-align: center;
             font-style: italic;
+        }
+
+        /* --- BOTÃO FLUTUANTE DE SONHOS --- */
+        .btn-flutuante-sonho {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1e293b;
+            color: #fbbf24;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 0 15px rgba(251, 191, 36, 0.3);
+            z-index: 2000;
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+            border: 2px solid #fbbf24;
+        }
+
+        .btn-flutuante-sonho:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 15px 30px rgba(251, 191, 36, 0.4);
+            color: white;
         }
 
         /* --- ÁREA DE COMENTÁRIOS --- */
@@ -149,10 +182,13 @@
         @media (max-width: 768px) { 
             #storiesGrid { grid-template-columns: 1fr; } 
             .titulo-vall { font-size: 2.2rem !important; }
+            .btn-flutuante-sonho { bottom: 20px; right: 20px; width: 50px; height: 50px; }
         }
     </style>
 </head>
 <body>
+
+    <a href="mailto:valdirp0@gmail.com?subject=Meu%20Sonho%20para%20o%20Contos%20do%20Vall" class="btn-flutuante-sonho" title="Envie seu sonho">🌙</a>
 
     <h1 class="titulo-vall">CONTOS DO VALL</h1>
     <p class="subtitulo">"ONDE OS SONHOS SE TRANSFORMAM EM ESTÓRIAS."</p>
@@ -171,7 +207,11 @@
     </div>
 
     <div id="areaComentarios" style="max-width: 450px; width: 100%; margin-bottom: 30px; background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-        <h3 style="font-weight: 900; color: #1e293b; margin-bottom: 15px; text-transform: uppercase; font-size: 0.85rem; text-align: center;">Deixe sua percepção</h3>
+        <h3 style="font-weight: 900; color: #1e293b; margin-bottom: 5px; text-transform: uppercase; font-size: 0.85rem; text-align: center;">Deixe sua percepção</h3>
+        
+        <p style="font-size: 0.75rem; color: #64748b; text-align: center; margin-bottom: 15px; font-style: italic; line-height: 1.3;">
+            Deseja ver seu próprio sonho transformado em conto? <br>Descreva-o aqui ou entre em contato!
+        </p>
         
         <div style="display: flex; flex-direction: column; gap: 10px;">
             <input type="text" id="nomeLeitor" placeholder="Seu nome" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; font-size: 0.85rem;">
