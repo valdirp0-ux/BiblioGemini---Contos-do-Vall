@@ -173,15 +173,18 @@
     <div id="areaComentarios" style="max-width: 1100px; width: 100%; margin-top: 50px; background: white; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
         <h3 style="font-weight: 900; color: #1e293b; margin-bottom: 20px; text-transform: uppercase; font-size: 1.2rem;">Deixe um comentário</h3>
         
-        <div style="display: flex; flex-direction: column; gap: 15px;">
-            <input type="text" id="nomeLeitor" placeholder="Seu nome" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; font-family: inherit;">
-            <textarea id="textoComentario" placeholder="O que você sentiu ao ler este conto?" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; height: 100px; outline: none; resize: none; font-family: inherit;"></textarea>
-            
-            <button onclick="enviarComentario()" style="background: #1e293b; color: white; padding: 14px; border-radius: 12px; font-weight: 900; cursor: pointer; transition: 0.3s; border: none; letter-spacing: 1px;">
-                PUBLICAR COMENTÁRIO
-            </button>
-        </div>
+       <div id="areaComentarios" style="max-width: 450px; width: 100%; margin: 0 auto 40px auto; background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <h3 style="font-weight: 900; color: #1e293b; margin-bottom: 15px; text-transform: uppercase; font-size: 0.9rem; text-align: center;">Deixe sua percepção</h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+        <input type="text" id="nomeLeitor" placeholder="Seu nome" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; font-size: 0.85rem;">
+        <textarea id="textoComentario" placeholder="O que sentiu ao ler?" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; height: 60px; outline: none; resize: none; font-size: 0.85rem;"></textarea>
+        
+        <button onclick="enviarComentario()" style="background: #1e293b; color: white; padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; border: none; font-size: 0.8rem;">
+            PUBLICAR
+        </button>
     </div>
+</div>
 
     <div id="modal" onclick="if(event.target == this) fecharModal()">
         <div style="background: white; padding: 30px; border-radius: 28px; width: 95%; max-width: 420px;">
